@@ -1,0 +1,46 @@
+# Ignore build output directory
+/build
+/export
+
+# Ignore object files and dependent files
+.o
+.d
+
+#Ignore logs folder and log files
+/logs
+.log
+
+#Ignore lock files
+.lock
+
+.bin
+.pdi
+.vitisWorkspace.json
+
+_ide/
+_x/
+.ipcache/
+.Xil/
+cfg/
+sim/
+Work/
+
+*.log
+*.txt
+
+sd_card.img
+sd_card/
+host.exe
+
+a.xclbin
+aie.merged.cdo.bin
+aie_base_graph_hw.xsa
+aie_base_graph_hw.xsa.link_summary
+aie_base_graph_hw_emu.xsa.link_summary
+BOOT.BIN
+BOOT_bh.bin
+boot_image.bif
+libadf.a
+Map_Report.csv
+sol.db
+v++.package_summary
