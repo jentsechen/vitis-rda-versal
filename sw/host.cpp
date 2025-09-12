@@ -22,7 +22,7 @@ SPDX-License-Identifier: MIT
 using namespace adf;
 using namespace std;
 
-const int ITERATION = 8;
+const int ITERATION = 1024;
 const int n_byte_per_sample = 8;
 const int n_sample_per_iter = 1024;
 const int BLOCK_SIZE_in_Bytes =
@@ -59,7 +59,9 @@ int main(int argc, char **argv) {
   //          n_byte_per_sample);
   memset(dinArray, 0, BLOCK_SIZE_in_Bytes);
   //   memcpy(dinArray, DataInput, arr.shape[1] * n_byte_per_sample);
-  memcpy(dinArray, DataInput, BLOCK_SIZE_in_Bytes);
+  //   memcpy(dinArray, DataInput, BLOCK_SIZE_in_Bytes);
+  int data_size = arr.shape[1] * n_byte_per_sample;
+  memcpy(dinArray, DataInput, min(data_size, BLOCK_SIZE_in_Bytes));
   auto end3 = std::chrono::high_resolution_clock::now();
   cout << "move data to DDR: "
        << std::chrono::duration_cast<std::chrono::microseconds>(end3 - start3)
@@ -82,7 +84,7 @@ int main(int argc, char **argv) {
               .count()
        << " us" << endl;
 
-  int offset = 0;
+  int offset = 0, iter_sum = 0;
   for (int iter = 0; iter < ITERATION; ++iter) {
     cout << "iter: " << iter << endl;
     auto start5 = std::chrono::high_resolution_clock::now();
@@ -90,10 +92,9 @@ int main(int argc, char **argv) {
     int32_t neg_val = -val;
     uint32_t neg_val_hex = static_cast<uint32_t>(neg_val);
     ghdl.update("gr.PhaseIncRTP", neg_val_hex);
-    // ghdl.update("gr.PhaseIncRTP", iter << 11);
-    uint32_t phase =
-        (iter == 0) ? 0 : ((iter - 1) << 11) * (n_sample_per_iter - 1);
-    cout << "phase: " << phase << endl;
+    uint32_t phase = (iter == 0 || iter == 1)
+                         ? 0
+                         : (iter_sum << 11) * (n_sample_per_iter - 1);
     ghdl.update("gr.PhaseRTP", phase);
     din_buffer.async("gr.gmioIn", XCL_BO_SYNC_BO_GMIO_TO_AIE,
                      n_sample_per_iter * n_byte_per_sample, offset);
@@ -104,33 +105,23 @@ int main(int argc, char **argv) {
                           n_sample_per_iter * n_byte_per_sample, offset);
     dout_buffer_run.wait();
     offset += (n_sample_per_iter * n_byte_per_sample);
+    iter_sum += iter;
     auto end5 = std::chrono::high_resolution_clock::now();
-    cout << "computation: "
-         << std::chrono::duration_cast<std::chrono::microseconds>(end5 - start5)
-                .count()
-         << " us" << endl;
+    if (iter < 30) {
+      cout << "computation: "
+           << std::chrono::duration_cast<std::chrono::microseconds>(end5 -
+                                                                    start5)
+                  .count()
+           << " us" << endl;
+    }
   }
   ghdl.end();
-  //   auto dout_buffer_run = dout_buffer.async(
-  //       "gr.gmioOut", XCL_BO_SYNC_BO_AIE_TO_GMIO, BLOCK_SIZE_in_Bytes, 0);
-  //   // PS can do other tasks here when data is transferring
-  //   dout_buffer_run.wait(); // Wait for gmioOut to complete
 
   auto start6 = std::chrono::high_resolution_clock::now();
-  std::array<std::complex<float>, ITERATION * n_sample_per_iter> output;
-  memcpy(output.data(), doutArray, output.size() * n_byte_per_sample);
+  cnpy::npy_save("output.npy", reinterpret_cast<std::complex<float>*>(doutArray), {ITERATION * n_sample_per_iter}, "w");
   auto end6 = std::chrono::high_resolution_clock::now();
-  cout << "move to PS: "
-       << std::chrono::duration_cast<std::chrono::microseconds>(end6 - start6)
-              .count()
-       << " us" << endl;
-
-  auto start7 = std::chrono::high_resolution_clock::now();
-  cnpy::npy_save("output.npy", output.data(), {ITERATION * n_sample_per_iter},
-                 "w");
-  auto end7 = std::chrono::high_resolution_clock::now();
   cout << "save npy: "
-       << std::chrono::duration_cast<std::chrono::microseconds>(end7 - start7)
+       << std::chrono::duration_cast<std::chrono::microseconds>(end6 - start6)
               .count()
        << " us" << endl;
 
