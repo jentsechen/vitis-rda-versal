@@ -13,17 +13,18 @@
 
   adf::GraphConfig GraphConfigurations[] = {
   //{id, name, graphLoadElfFunc, graphInitFunc, graphDebugHalt, coreColumns, coreRows, iterMemColumns, iterMemRows, iterMemAddrs, triggered, plKernelInstanceNames, plAxiLiteModes, plDriverStartFuncs, plDriverCheckIPDoneFuncs}
-    {0, "gr", nullptr, nullptr, nullptr, {26, 27}, {0, 0}, {26, 27}, {1, 1}, {0x2904, 0x4}, {0, 0}, {}, {}, {}, {},  }, 
+    {0, "gr", nullptr, nullptr, nullptr, {26, 27}, {0, 0}, {26, 27}, {1, 0}, {0x4, 0x4}, {0, 0}, {}, {}, {}, {},  }, 
+    {4, "row_fft_graph", nullptr, nullptr, nullptr, {22}, {0}, {22}, {1}, {0x4}, {0}, {}, {}, {}, {},  }, 
   };
-  const int NUM_GRAPH = 1;
+  const int NUM_GRAPH = 2;
 
 
 /************************** RTP Configurations  *****************************/
 
   adf::RTPConfig RTPConfigurations[] = {
   //{portId, aliasId, portName, aliasName, graphId, isInput, isAsync, isConnect, elemType, numBytes, isPL, hasLock, blocking, selectorColumn, selectorRow, selectorAddr, selectorLockId, pingColumn, pingRow, pingAddr, pongColumn, pongRow, pongAddr, pongLockId, plKernelInstanceName, plParameterIndex, plDriverWriteRTP, plDriverReadRTP}
-    {13, 16, "gr.dds_kernel.m_ddsKernel[0].in[1]", "gr.PhaseRTP", 0, true, true, false, (adf::RTPConfig::elementType)9, 4, false, true, false, 27, 1, 0x2020, 0, 27, 1, 0x2000, 1, 26, 0, 0x6000, 2, "", -1, nullptr, nullptr},
-    {14, 15, "gr.dds_kernel.m_ddsKernel[0].in[2]", "gr.PhaseIncRTP", 0, true, true, false, (adf::RTPConfig::elementType)9, 4, false, true, false, 27, 1, 0x3fe0, 2, 27, 1, 0x2040, 3, 27, 1, 0x600, 4, "", -1, nullptr, nullptr},
+    {13, 16, "gr.dds_kernel.m_ddsKernel[0].in[1]", "gr.PhaseRTP", 0, true, true, false, (adf::RTPConfig::elementType)9, 4, false, true, false, 26, 0, 0x5000, 2, 27, 1, 0x4000, 0, 27, 1, 0x6000, 1, "", -1, nullptr, nullptr},
+    {14, 15, "gr.dds_kernel.m_ddsKernel[0].in[2]", "gr.PhaseIncRTP", 0, true, true, false, (adf::RTPConfig::elementType)9, 4, false, true, false, 26, 0, 0x5020, 3, 27, 1, 0x1000, 2, 27, 1, 0x2000, 3, "", -1, nullptr, nullptr},
   };
   const int NUM_RTP = 2;
 
@@ -36,6 +37,15 @@
     {1, "gr.gmioIn", "gmioIn", (adf::gmio_config::gmio_type)0, 26, 2, 3, 4, 0, { }, "", -1, -1, nullptr, }, 
   };
   const int NUM_GMIO = 2;
+
+/************************** PLIO Configurations  *****************************/
+
+  adf::PLIOConfig PLIOConfigurations[] = {
+  //{id, name, loginal_name, shim_column, slaveOrMaster, streamId}
+    {0, "row_fft_graph.row_fft_in", "row_fft_in", 22, 0, 0},
+    {1, "row_fft_graph.row_fft_out", "row_fft_out", 22, 1, 0},
+  };
+  const int NUM_PLIO = 2;
 
 
 /************************** ADF API initializer *****************************/
@@ -61,7 +71,7 @@
                                     nullptr, 0,
                                     nullptr, 0,
                                     GMIOConfigurations, NUM_GMIO,
-                                    nullptr, 0,
+                                    PLIOConfigurations, NUM_PLIO,
                                     nullptr, 0, 0, nullptr,
                                     false, exclude_pl_control, false, nullptr,
                                     true, 2);

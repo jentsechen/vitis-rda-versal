@@ -27,6 +27,8 @@ HOST_EXE = host.exe
 
 GRAPH    = aie/graph.cpp
 LIBADF  = libadf.a
+FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
+FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			-I../Vitis_Libraries/dsp/L1/include/aie \
 			-I../Vitis_Libraries/dsp/L1/src/aie \
@@ -34,6 +36,7 @@ AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			--include="./aie" --work_dir=./Work \
 			${GRAPH} 2>&1 | tee log.txt
 AIE_SIM_CMD = aiesimulator --pkg-dir=./Work --dump-vcd foo
+HLS_CMPL_CMD = v++ -c --mode hls --platform ${PLATFORM} --config ./hls/fft_strided_mm2s.cfg
 EMU_CMD = ./launch_hw_emu.sh
 
 ##########################################################################################################################################################
@@ -87,11 +90,17 @@ ${LIBADF}: aie/*
 aiesim: ${LIBADF}
 	${AIE_SIM_CMD}
 
+# hls: hls/*
+# 	${HLS_CMPL_CMD}
+
+hls: hls/*
+	make all -C hls
+
 xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 
 
-${XSA}: ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp

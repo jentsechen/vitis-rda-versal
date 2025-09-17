@@ -31,6 +31,9 @@ Work/
 sd_card.img
 sd_card/
 host.exe
+sw/aie_control_xrt.cpp
+sw/aie_control_xrt.o
+sw/host.o
 
 a.xclbin
 aie.merged.cdo.bin

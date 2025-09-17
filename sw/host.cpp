@@ -71,13 +71,10 @@ int main(int argc, char **argv) {
   auto dout_buffer =
       xrt::aie::bo(device, BLOCK_SIZE_in_Bytes, xrt::bo::flags::normal, 0);
   auto *doutArray = dout_buffer.map<__uint64_t *>();
+  memset(doutArray, 0, BLOCK_SIZE_in_Bytes);
 
   auto start4 = std::chrono::high_resolution_clock::now();
   auto ghdl = xrt::graph(device, uuid, "gr");
-  //   din_buffer.async("gr.gmioIn", XCL_BO_SYNC_BO_GMIO_TO_AIE,
-  //   BLOCK_SIZE_in_Bytes,
-  //                    0);
-  //   ghdl.run(ITERATION);
   auto end4 = std::chrono::high_resolution_clock::now();
   cout << "initialize graph: "
        << std::chrono::duration_cast<std::chrono::microseconds>(end4 - start4)
@@ -86,7 +83,7 @@ int main(int argc, char **argv) {
 
   int offset = 0, iter_sum = 0;
   for (int iter = 0; iter < ITERATION; ++iter) {
-    cout << "iter: " << iter << endl;
+    // cout << "iter: " << iter << endl;
     auto start5 = std::chrono::high_resolution_clock::now();
     int32_t val = iter << 11;
     int32_t neg_val = -val;
@@ -107,21 +104,59 @@ int main(int argc, char **argv) {
     offset += (n_sample_per_iter * n_byte_per_sample);
     iter_sum += iter;
     auto end5 = std::chrono::high_resolution_clock::now();
-    if (iter < 30) {
-      cout << "computation: "
-           << std::chrono::duration_cast<std::chrono::microseconds>(end5 -
-                                                                    start5)
-                  .count()
-           << " us" << endl;
-    }
+    // if (iter < 30) {
+    //   cout << "computation: "
+    //        << std::chrono::duration_cast<std::chrono::microseconds>(end5 -
+    //                                                                 start5)
+    //               .count()
+    //        << " us" << endl;
+    // }
   }
   ghdl.end();
 
-  auto start6 = std::chrono::high_resolution_clock::now();
-  cnpy::npy_save("output.npy", reinterpret_cast<std::complex<float>*>(doutArray), {ITERATION * n_sample_per_iter}, "w");
-  auto end6 = std::chrono::high_resolution_clock::now();
+  auto transpose_dout_buffer =
+      xrt::bo(device, BLOCK_SIZE_in_Bytes, xrt::bo::flags::normal, 0);
+  auto *transposeDoutArray = transpose_dout_buffer.map<__uint64_t *>();
+  xrt::bo row_fft_mm2s_buffer = xrt::bo{dout_buffer};
+  row_fft_mm2s_buffer.sync(XCL_BO_SYNC_BO_TO_DEVICE);
+  auto row_fft_strided_mm2s =
+      xrt::kernel(device, uuid, "fft_strided_mm2s:{fft_strided_mm2s_0}");
+  auto row_fft_strided_s2mm =
+      xrt::kernel(device, uuid, "fft_strided_s2mm:{fft_strided_s2mm_0}");
+  auto row_fft_graph_hdl = xrt::graph(device, uuid, "row_fft_graph");
+
+  for (int iter = 0; iter < ITERATION; iter++) {
+    cout << "iter: " << iter << endl;
+    auto row_fft_strided_mm2s_rhdl =
+        row_fft_strided_mm2s(row_fft_mm2s_buffer, iter);
+    auto row_fft_strided_s2mm_rhdl =
+        row_fft_strided_s2mm(transpose_dout_buffer, iter);
+    row_fft_graph_hdl.run(1);
+    row_fft_strided_mm2s_rhdl.wait();
+    row_fft_strided_s2mm_rhdl.wait();
+    row_fft_graph_hdl.wait();
+    transpose_dout_buffer.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
+  }
+
+  std::complex<float> *out_ptr =
+      reinterpret_cast<std::complex<float> *>(doutArray);
+  for (int i = 0; i < 10; i++) {
+    printf("output[%d]=%f+1j*%f\n", i, out_ptr[i].real(), out_ptr[i].imag());
+  }
+  std::complex<float> *trans_out_ptr =
+      reinterpret_cast<std::complex<float> *>(transposeDoutArray);
+  for (int i = 0; i < 10; i++) {
+    printf("transpose output[%d]=%f+1j*%f\n", i, trans_out_ptr[i].real(),
+           trans_out_ptr[i].imag());
+  }
+
+  auto start7 = std::chrono::high_resolution_clock::now();
+  cnpy::npy_save("output.npy",
+                 reinterpret_cast<std::complex<float> *>(transposeDoutArray),
+                 {ITERATION * n_sample_per_iter}, "w");
+  auto end7 = std::chrono::high_resolution_clock::now();
   cout << "save npy: "
-       << std::chrono::duration_cast<std::chrono::microseconds>(end6 - start6)
+       << std::chrono::duration_cast<std::chrono::microseconds>(end7 - start7)
               .count()
        << " us" << endl;
 

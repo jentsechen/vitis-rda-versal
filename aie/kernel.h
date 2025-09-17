@@ -6,6 +6,6 @@ SPDX-License-Identifier: MIT
 #define __KERNEL_H__
 #include <adf.h>
 using namespace adf;
-void bypass_func(input_buffer<cfloat, extents<256>> &restrict in,
-                 output_buffer<cfloat, extents<256>> &restrict out);
+void bypass_func(input_buffer<cfloat, extents<1024>> &restrict in,
+                 output_buffer<cfloat, extents<1024>> &restrict out);
 #endif

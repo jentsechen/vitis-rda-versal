@@ -41,7 +41,6 @@ private:
       TT_DATA_, TP_WINDOW_VSIZE, TP_MIXER_MODE, TP_API, TP_SSR, TP_RND, TP_SAT,
       TP_USE_PHASE_RELOAD, TP_PHASE_RELOAD_API, TP_USE_PHASE_INC_RELOAD>
       dds_kernel;
-  //   adf::kernel k_m;
 
 public:
   adf::output_gmio gmioOut;
@@ -49,19 +48,12 @@ public:
   adf::port<input> PhaseIncRTP, PhaseRTP;
 
   mygraph() : dds_kernel(0x00000000) {
-    // k_m = adf::kernel::create(bypass_func);
     gmioOut = adf::output_gmio::create("gmioOut", 64, 1000);
     gmioIn = adf::input_gmio::create("gmioIn", 64, 1000);
-
-    // adf::connect<>(gmioIn.out[0], k_m.in[0]);
-    // adf::connect<>(k_m.out[0], gmioOut.in[0]);
-    // adf::source(k_m) = "bypass_func.cc";
-    // adf::runtime<adf::ratio>(k_m) = 0.9;
 
     adf::connect<>(gmioIn.out[0], fft_kernel.in[0]);
     adf::connect<>(fft_kernel.out[0], dds_kernel.in1[0]);
     adf::connect<>(dds_kernel.out[0], gmioOut.in[0]);
-    // adf::connect<>(fft_kernel.out[0], gmioOut.in[0]);
     adf::connect<>(PhaseIncRTP, dds_kernel.PhaseIncRTP[0]);
     adf::connect<>(PhaseRTP, dds_kernel.PhaseRTP[0]);
     runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
