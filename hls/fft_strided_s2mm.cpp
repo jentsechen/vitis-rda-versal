@@ -18,7 +18,8 @@ void fft_strided_s2mm(ap_int<SAMPLE_BIT_WIDTH> *mem, int strided_index,
 #pragma HLS LOOP_TRIPCOUNT min = SUB_FFT_SIZE max = SUB_FFT_SIZE
 #pragma HLS PIPELINE II = 1
     ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x = s.read();
-    mem[strided_index * SUB_FFT_SIZE + i] = x.data;
+    // mem[strided_index * SUB_FFT_SIZE + i] = x.data;
+    mem[i * SUB_FFT_SIZE + strided_index] = x.data;
   }
 }
 }
