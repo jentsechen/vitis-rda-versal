@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
   memset(doutArray, 0, BLOCK_SIZE_in_Bytes);
 
   auto start4 = std::chrono::high_resolution_clock::now();
-  auto ghdl = xrt::graph(device, uuid, "gr");
+  auto ghdl = xrt::graph(device, uuid, "col_fft_twd_mul_graph");
   auto end4 = std::chrono::high_resolution_clock::now();
   cout << "initialize graph: "
        << std::chrono::duration_cast<std::chrono::microseconds>(end4 - start4)
@@ -88,18 +88,19 @@ int main(int argc, char **argv) {
     int32_t val = iter << 11;
     int32_t neg_val = -val;
     uint32_t neg_val_hex = static_cast<uint32_t>(neg_val);
-    ghdl.update("gr.PhaseIncRTP", neg_val_hex);
+    ghdl.update("col_fft_twd_mul_graph.PhaseIncRTP", neg_val_hex);
     uint32_t phase = (iter == 0 || iter == 1)
                          ? 0
                          : (iter_sum << 11) * (n_sample_per_iter - 1);
-    ghdl.update("gr.PhaseRTP", phase);
-    din_buffer.async("gr.gmioIn", XCL_BO_SYNC_BO_GMIO_TO_AIE,
+    ghdl.update("col_fft_twd_mul_graph.PhaseRTP", phase);
+    din_buffer.async("col_fft_twd_mul_graph.col_fft_twd_mul_in",
+                     XCL_BO_SYNC_BO_GMIO_TO_AIE,
                      n_sample_per_iter * n_byte_per_sample, offset);
     ghdl.run(1);
     ghdl.wait();
-    auto dout_buffer_run =
-        dout_buffer.async("gr.gmioOut", XCL_BO_SYNC_BO_AIE_TO_GMIO,
-                          n_sample_per_iter * n_byte_per_sample, offset);
+    auto dout_buffer_run = dout_buffer.async(
+        "col_fft_twd_mul_graph.col_fft_twd_mul_out", XCL_BO_SYNC_BO_AIE_TO_GMIO,
+        n_sample_per_iter * n_byte_per_sample, offset);
     dout_buffer_run.wait();
     offset += (n_sample_per_iter * n_byte_per_sample);
     iter_sum += iter;

@@ -16,7 +16,7 @@
 #define TP_PARALLEL_POWER 0
 #define TP_USE_WIDGETS 0
 
-class RowFFTGraph : public adf::graph {
+class RowFftGraph : public adf::graph {
 private:
   xf::dsp::aie::fft::dit_1ch::fft_ifft_dit_1ch_graph<
       TT_DATA_, TT_TWIDDLE_, TP_POINT_SIZE, TP_FFT_NIFFT, TP_SHIFT, TP_CASC_LEN,
@@ -27,7 +27,7 @@ private:
 public:
   adf::input_plio row_fft_in;
   adf::output_plio row_fft_out;
-  RowFFTGraph() {
+  RowFftGraph() {
     row_fft_in = input_plio::create("row_fft_in", adf::plio_64_bits);
     row_fft_out = output_plio::create("row_fft_out", adf::plio_64_bits);
     adf::connect<>(row_fft_in.out[0], fft_kernel.in[0]);
