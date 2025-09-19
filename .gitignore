@@ -33,6 +33,8 @@ sd_card/
 host.exe
 sw/aie_control_xrt.*
 sw/*.o
+sw/*/
+hls/*/
 
 a.xclbin
 aie.merged.cdo.bin

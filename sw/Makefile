@@ -21,6 +21,7 @@ ${HOST_EXE}: ${HOST_OBJ}
 
 aie_control_xrt.cpp: ${AIE_CTRL_CPP}
 	cp -f ${AIE_CTRL_CPP} .
+	@bash fix_aie_control_xrt.sh
 
 clean:
 	rm -rf ${HOST_OBJ} .Xil ${HOST_EXE} aie_control_xrt.cpp
