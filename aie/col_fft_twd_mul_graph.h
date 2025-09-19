@@ -7,19 +7,9 @@ SPDX-License-Identifier: MIT
 
 #include "../../Vitis_Libraries/dsp/L2/include/aie/dds_mixer_graph.hpp"
 #include "../../Vitis_Libraries/dsp/L2/include/aie/fft_ifft_dit_1ch_graph.hpp"
+#include "kernel.h"
+#include "sub_fft_par.h"
 #include <adf.h>
-
-#define TT_DATA_ cfloat
-#define TT_TWIDDLE_ cfloat
-#define TP_POINT_SIZE 1024
-#define TP_FFT_NIFFT 1
-#define TP_SHIFT 0
-#define TP_CASC_LEN 1
-#define TP_DYN_PT_SIZE 0
-#define TP_WINDOW_VSIZE TP_POINT_SIZE
-#define TP_API 0
-#define TP_PARALLEL_POWER 0
-#define TP_USE_WIDGETS 0
 
 #define TP_MIXER_MODE 1
 #define TP_SSR 1
@@ -40,6 +30,7 @@ private:
       TT_DATA_, TP_WINDOW_VSIZE, TP_MIXER_MODE, TP_API, TP_SSR, TP_RND, TP_SAT,
       TP_USE_PHASE_RELOAD, TP_PHASE_RELOAD_API, TP_USE_PHASE_INC_RELOAD>
       dds_kernel;
+  kernel splitter, combiner;
 
 public:
   //   adf::input_gmio col_fft_twd_mul_in;
@@ -55,12 +46,28 @@ public:
     col_fft_twd_mul_out =
         adf::output_gmio::create("col_fft_twd_mul_out", 64, 1000);
 
-    adf::connect<>(col_fft_twd_mul_in.out[0], fft_kernel.in[0]);
-    adf::connect<>(fft_kernel.out[0], dds_kernel.in1[0]);
+    splitter = kernel::create(widget_splitter);
+    source(splitter) = "./widget_splitter.cpp";
+    runtime<ratio>(splitter) = 0.8;
+    combiner = kernel::create(widget_combiner);
+    source(combiner) = "./widget_combiner.cpp";
+    runtime<ratio>(combiner) = 0.8;
+
+    // adf::connect<>(col_fft_twd_mul_in.out[0], fft_kernel.in[0]);
+    // adf::connect<>(fft_kernel.out[0], dds_kernel.in1[0]);
+    // adf::connect<>(dds_kernel.out[0], col_fft_twd_mul_out.in[0]);
+
+    adf::connect<>(col_fft_twd_mul_in.out[0], splitter.in[0]);
+    adf::connect<>(splitter.out[0], fft_kernel.in[0]);
+    adf::connect<>(splitter.out[1], fft_kernel.in[1]);
+    adf::connect<>(fft_kernel.out[0], combiner.in[0]);
+    adf::connect<>(fft_kernel.out[1], combiner.in[1]);
+    adf::connect<>(combiner.out[0], dds_kernel.in1[0]);
     adf::connect<>(dds_kernel.out[0], col_fft_twd_mul_out.in[0]);
+
     adf::connect<>(PhaseIncRTP, dds_kernel.PhaseIncRTP[0]);
     adf::connect<>(PhaseRTP, dds_kernel.PhaseRTP[0]);
-    runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
+    // runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
     runtime<ratio>(*dds_kernel.getKernels()) = 0.8;
   };
 };

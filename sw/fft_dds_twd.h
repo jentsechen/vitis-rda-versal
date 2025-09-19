@@ -4,9 +4,11 @@
 #include "xrt/xrt_graph.h"
 #include "xrt/xrt_kernel.h"
 #include <algorithm>
+#include <chrono>
 #include <complex>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <vector>
 
 const size_t n_iter = 1024;
