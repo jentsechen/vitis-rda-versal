@@ -1,10 +1,7 @@
-/*
-Copyright (C) 2023, Advanced Micro Devices, Inc. All rights reserved.
-SPDX-License-Identifier: MIT
-*/
 #include "./cnpy/cnpy.cpp"
 #include "./cnpy/cnpy.h"
-#include "fft_dds_twd.h"
+// #include "fft_dds_twd.h"
+#include "fft_acc_mult_twd.h"
 #include "xrt/xrt_aie.h"
 #include "xrt/xrt_graph.h"
 #include "xrt/xrt_kernel.h"
@@ -33,7 +30,8 @@ int main(int argc, char **argv) {
   auto device = xrt::device(0);
   auto uuid = device.load_xclbin(xclbinFilename);
 
-  auto output = fft_dds_twd(device, uuid, DataInput, arr.shape[1]);
+  //   auto output = fft_dds_twd(device, uuid, DataInput, arr.shape[1]);
+  auto output = fft_acc_mult_twd(device, uuid, DataInput, arr.shape[1]);
 
   cnpy::npy_save("output.npy", output.data(), {n_iter * n_sample_per_iter},
                  "w");

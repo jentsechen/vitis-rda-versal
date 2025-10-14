@@ -23,23 +23,9 @@ public:
     row_fft_in = input_plio::create("row_fft_in", adf::plio_64_bits);
     row_fft_out = output_plio::create("row_fft_out", adf::plio_64_bits);
 
-    splitter = kernel::create(widget_splitter);
-    source(splitter) = "./widget_splitter.cpp";
-    runtime<ratio>(splitter) = 0.8;
-    combiner = kernel::create(widget_combiner);
-    source(combiner) = "./widget_combiner.cpp";
-    runtime<ratio>(combiner) = 0.8;
-
-    // adf::connect<>(row_fft_in.out[0], fft_kernel.in[0]);
-    // adf::connect<>(fft_kernel.out[0], row_fft_out.in[0]);
-    // runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
-
-    adf::connect<>(row_fft_in.out[0], splitter.in[0]);
-    adf::connect<>(splitter.out[0], fft_kernel.in[0]);
-    adf::connect<>(splitter.out[1], fft_kernel.in[1]);
-    adf::connect<>(fft_kernel.out[0], combiner.in[0]);
-    adf::connect<>(fft_kernel.out[1], combiner.in[1]);
-    adf::connect<>(combiner.out[0], row_fft_out.in[0]);
+    adf::connect<>(row_fft_in.out[0], fft_kernel.in[0]);
+    adf::connect<>(fft_kernel.out[0], row_fft_out.in[0]);
+    runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
   }
 };
 

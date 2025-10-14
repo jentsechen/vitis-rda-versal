@@ -47,7 +47,6 @@ EMU_CMD = ./launch_hw_emu.sh
 VCC      = v++
 VPP_SPEC =system.cfg
 VPP_FLAGS=--save-temps --verbose --config ${VPP_SPEC}  
-LDCLFLAGS=
 
 .PHONY: clean
 
@@ -103,10 +102,12 @@ ${XSA}: ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} ${VPP_SPEC}
 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
-${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp
+
+${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_dds_twd.cpp
 	$(MAKE) -C sw/
 
 package: guard-ROOTFS guard-IMAGE guard-PLATFORM_REPO_PATHS package_${TARGET}
+
 package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
 		--package.rootfs ${ROOTFS} \

@@ -1,7 +1,3 @@
-/*
-Copyright (C) 2023, Advanced Micro Devices, Inc. All rights reserved.
-SPDX-License-Identifier: MIT
-*/
 #include "col_fft_twd_mul_graph.h"
 #include "row_fft_graph.h"
 #include <adf.h>

@@ -7,5 +7,5 @@
 #define TP_DYN_PT_SIZE 0
 #define TP_WINDOW_VSIZE TP_POINT_SIZE
 #define TP_API 0
-#define TP_PARALLEL_POWER 1
-#define TP_USE_WIDGETS 1
+#define TP_PARALLEL_POWER 0
+#define TP_USE_WIDGETS 0

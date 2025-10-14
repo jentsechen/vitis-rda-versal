@@ -1,50 +1,38 @@
-# Ignore build output directory
-/build
-/export
-
-# Ignore object files and dependent files
-.o
-.d
-
-#Ignore logs folder and log files
-/logs
-.log
-
-#Ignore lock files
-.lock
-
-.bin
-.pdi
-.vitisWorkspace.json
-
 _ide/
 _x/
 .ipcache/
 .Xil/
 cfg/
+extracted/
 sim/
+
 Work/
+sd_card/
 
 *.log
+*.csv
+*.db
+*.img
+*.BIN
+*.bin
+*.xclbin
+*.bif
+*.xsa
+*.link_summary
+*.package_summary
+*.exe
+*.a
 *.txt
 
-sd_card.img
-sd_card/
-host.exe
-sw/aie_control_xrt.*
-sw/*.o
-sw/*/
-hls/*/
+hls/.Xil/
+hls/fft_strided_mm2s/
+hls/fft_strided_s2mm/
 
-a.xclbin
-aie.merged.cdo.bin
-aie_base_graph_hw.xsa
-aie_base_graph_hw.xsa.link_summary
-aie_base_graph_hw_emu.xsa.link_summary
-BOOT.BIN
-BOOT_bh.bin
-boot_image.bif
-libadf.a
-Map_Report.csv
-sol.db
-v++.package_summary
+sw/cnpy/
+sw/aie_control_xrt.*
+*.o
+
+make
+verify/*.html
+verify/data_rx_1024_complex_64.npy
+verify/output.npy
