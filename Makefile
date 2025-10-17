@@ -28,6 +28,7 @@ HOST_EXE = host.exe
 GRAPH    = aie/graph.cpp
 LIBADF  = libadf.a
 FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
+FFTStridedMM2SBatch = ./hls/fft_strided_mm2s_batch/fft_strided_mm2s_batch.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			-I../Vitis_Libraries/dsp/L1/include/aie \
@@ -97,13 +98,18 @@ hls: hls/*
 
 xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 
-
-${XSA}: ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${FFTStridedMM2S} ${LIBADF} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBatch} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatch} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
-${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_dds_twd.cpp
+# ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_dds_twd.cpp
+# 	$(MAKE) -C sw/
+${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_acc_mult_twd.cpp
 	$(MAKE) -C sw/
 
 package: guard-ROOTFS guard-IMAGE guard-PLATFORM_REPO_PATHS package_${TARGET}
@@ -115,13 +121,7 @@ package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE}
 		--package.boot_mode=sd \
 		--package.image_format=ext4 \
 		--package.defer_aie_run \
-		--package.sd_file embedded_exec.sh \
-		--package.sd_file ${HOST_EXE} \
-		${XSA} ${LIBADF}
-
-run_hw_emu: launch_hw_emu.sh
-launch_hw_emu.sh: package_hw_emu
-	$(EMU_CMD)
+		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
 
 clean:
 	rm -rf _x v++_* ${XOS} ${OS} ${LIBADF} *.o.* *.o *.xpe *.xo.* \
