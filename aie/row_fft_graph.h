@@ -9,23 +9,42 @@
 class RowFftGraph : public adf::graph {
 private:
   xf::dsp::aie::fft::dit_1ch::fft_ifft_dit_1ch_graph<
-      TT_DATA_, TT_TWIDDLE_, TP_POINT_SIZE, TP_FFT_NIFFT, TP_SHIFT, TP_CASC_LEN,
-      TP_DYN_PT_SIZE, TP_WINDOW_VSIZE, TP_API, TP_PARALLEL_POWER,
-      TP_USE_WIDGETS>
-      fft_kernel;
-  kernel splitter, combiner;
+      cfloat,                      // TT_DATA
+      cfloat,                      // TT_TWIDDLE
+      TP_POINT_SIZE,               // TP_POINT_SIZE
+      1,                           // TP_FFT_NIFFT
+      0,                           // TP_SHIFT
+      1,                           // TP_CASC_LEN
+      0,                           // TP_DYN_PT_SIZE
+      TP_POINT_SIZE * N_BATCH_FFT, // TP_WINDOW_VSIZE
+      0,                           // TP_API
+      0,                           // TP_PARALLEL_POWER
+      0                            // TP_USE_WIDGETS
+      >
+      fft_kernel[N_PARAL];
 
 public:
-  adf::input_plio row_fft_in;
-  adf::output_plio row_fft_out;
+  adf::input_plio row_fft_in_0, row_fft_in_1, row_fft_in_2, row_fft_in_3;
+  adf::output_gmio row_fft_out_0, row_fft_out_1, row_fft_out_2, row_fft_out_3;
 
   RowFftGraph() {
-    row_fft_in = input_plio::create("row_fft_in", adf::plio_64_bits);
-    row_fft_out = output_plio::create("row_fft_out", adf::plio_64_bits);
+    row_fft_in_0 = input_plio::create("row_fft_in_0", adf::plio_64_bits);
+    row_fft_in_1 = input_plio::create("row_fft_in_1", adf::plio_64_bits);
+    row_fft_in_2 = input_plio::create("row_fft_in_2", adf::plio_64_bits);
+    row_fft_in_3 = input_plio::create("row_fft_in_3", adf::plio_64_bits);
+    row_fft_out_0 = adf::output_gmio::create("row_fft_out_0", 256, 1000);
+    row_fft_out_1 = adf::output_gmio::create("row_fft_out_1", 256, 1000);
+    row_fft_out_2 = adf::output_gmio::create("row_fft_out_2", 256, 1000);
+    row_fft_out_3 = adf::output_gmio::create("row_fft_out_3", 256, 1000);
 
-    adf::connect<>(row_fft_in.out[0], fft_kernel.in[0]);
-    adf::connect<>(fft_kernel.out[0], row_fft_out.in[0]);
-    runtime<ratio>(*fft_kernel.getKernels()) = 0.8;
+    adf::connect<>(row_fft_in_0.out[0], fft_kernel[0].in[0]);
+    adf::connect<>(row_fft_in_1.out[0], fft_kernel[1].in[0]);
+    adf::connect<>(row_fft_in_2.out[0], fft_kernel[2].in[0]);
+    adf::connect<>(row_fft_in_3.out[0], fft_kernel[3].in[0]);
+    adf::connect<>(fft_kernel[0].out[0], row_fft_out_0.in[0]);
+    adf::connect<>(fft_kernel[1].out[0], row_fft_out_1.in[0]);
+    adf::connect<>(fft_kernel[2].out[0], row_fft_out_2.in[0]);
+    adf::connect<>(fft_kernel[3].out[0], row_fft_out_3.in[0]);
   }
 };
 

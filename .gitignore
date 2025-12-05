@@ -26,6 +26,7 @@ sd_card/
 
 hls/.Xil/
 hls/fft_strided_mm2s/
+hls/fft_strided_mm2s_bat/
 hls/fft_strided_s2mm/
 
 sw/cnpy/

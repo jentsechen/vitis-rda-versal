@@ -9,22 +9,17 @@
 
 // void twd_mult(input_stream<cfloat> *restrict in,
 //               output_stream<cfloat> *restrict out) {
-//   for (int i = 0; i < 1024; i++) {
-//     cfloat mult_in = readincr(in);
-//     // cfloat mult_out = mult_in * twd_factor_table[i];
-//     cfloat mult_out = mult_in;
-//     writeincr(out, mult_out);
+//   aie::vector<cfloat, VEC_SIZE> *acc_ptr =
+//       (aie::vector<cfloat, VEC_SIZE> *)twd_factor_acc;
+//   const aie::vector<cfloat, VEC_SIZE> *inc_ptr =
+//       (const aie::vector<cfloat, VEC_SIZE> *)twd_factor_inc;
+//   for (int i = 0; i < BLOCK_SIZE; i++) {
+//     aie::vector<cfloat, VEC_SIZE> data_in = readincr_v<VEC_SIZE>(in);
+//     aie::vector<cfloat, VEC_SIZE> data_out = aie::mul(data_in, acc_ptr[i]);
+//     writeincr_v(out, data_out);
 //   }
-// }
-
-// void twd_mult(adf::input_buffer<cfloat, adf::extents<1024>> &in,
-//               adf::output_buffer<cfloat, adf::extents<1024>> &out) {
-//   auto inIter = aie::begin(in);
-//   auto outIter = aie::begin(out);
-//   for (int i = 0; i < 1024; i++, inIter++) {
-//     cfloat mult_in = *inIter;
-//     cfloat mult_out = mult_in * twd_factor_table[i];
-//     *outIter++ = mult_out;
+//   for (int i = 0; i < BLOCK_SIZE; i++) {
+//     acc_ptr[i] = aie::mul(acc_ptr[i], inc_ptr[i]);
 //   }
 // }
 
@@ -38,8 +33,6 @@ void twd_mult(adf::input_buffer<cfloat, adf::extents<SUB_FFT_SIZE>> &in,
       (const aie::vector<cfloat, VEC_SIZE> *)twd_factor_inc;
   for (int i = 0; i < BLOCK_SIZE; i++) {
     *outIter++ = aie::mul(*inIter++, acc_ptr[i]);
-  }
-  for (int i = 0; i < BLOCK_SIZE; i++) {
     acc_ptr[i] = aie::mul(acc_ptr[i], inc_ptr[i]);
   }
 }

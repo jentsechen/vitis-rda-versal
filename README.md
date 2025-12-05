@@ -27,23 +27,23 @@ python3 verify_output.py
 for(int i=0; i<1024; i++){
     move_data_from_ddr_to_aie();
     trigger_fft_1024_twd_mult_graph();
-    move_data_from_daie_to_ddr();
+    move_data_from_aie_to_ddr();
 }
 // row-wise operation
 for(int i=0; i<1024; i++){
     move_data_from_ddr_to_aie();
     trigger_fft_1024_graph();
-    move_data_from_daie_to_ddr();
+    move_data_from_aie_to_ddr();
 }
 ```
 
 ## Implementation Result
-| ... | ... |
+| no parallelism | row-wise FFT with 4-parallelism and 2-batch |
 | :---: | :---: |
-| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us| Time requirement: 161250 us|
-|![](./imp_result/AIE_util_acc_mult.png)|
-|![](./imp_result/graph_acc_mult.png)|
-|![](./imp_result/array_acc_mult.png)|
+| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 72613 us <br> row time req.: 20494 us <br> total time req.: 93156 us |
+|![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_paral/aie_util.png)|
+|![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_paral/graph.png)|
+|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_paral/array.png)|
 
 # Comparing with GPU
 * Raw data: 1024x22016 pixels

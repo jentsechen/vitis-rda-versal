@@ -5,7 +5,9 @@
 #define TP_SHIFT 0
 #define TP_CASC_LEN 1
 #define TP_DYN_PT_SIZE 0
-#define TP_WINDOW_VSIZE TP_POINT_SIZE
+// #define TP_WINDOW_VSIZE 1024 * 2
 #define TP_API 0
 #define TP_PARALLEL_POWER 0
 #define TP_USE_WIDGETS 0
+#define N_PARAL 4
+#define N_BATCH_FFT 2

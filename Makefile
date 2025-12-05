@@ -28,13 +28,14 @@ HOST_EXE = host.exe
 GRAPH    = aie/graph.cpp
 LIBADF  = libadf.a
 FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
-FFTStridedMM2SBatch = ./hls/fft_strided_mm2s_batch/fft_strided_mm2s_batch.xo
+FFTStridedMM2SBat = ./hls/fft_strided_mm2s_bat/fft_strided_mm2s_bat.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			-I../Vitis_Libraries/dsp/L1/include/aie \
 			-I../Vitis_Libraries/dsp/L1/src/aie \
 			-I../Vitis_Libraries/dsp/L2/include/aie \
 			--include="./aie" --work_dir=./Work \
+			--aie.constraints="aie_constraints.json" \
 			${GRAPH} 2>&1 | tee log.txt
 AIE_SIM_CMD = aiesimulator --pkg-dir=./Work --dump-vcd foo
 HLS_CMPL_CMD = v++ -c --mode hls --platform ${PLATFORM} --config ./hls/fft_strided_mm2s.cfg
@@ -102,8 +103,8 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${FFTStridedMM2S} ${LIBADF} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
-${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBatch} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatch} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
