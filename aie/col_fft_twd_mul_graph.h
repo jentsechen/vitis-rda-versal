@@ -8,14 +8,19 @@
 
 class ColFftTwdMulGraph : public adf::graph {
 private:
-  //   xf::dsp::aie::fft::dit_1ch::fft_ifft_dit_1ch_graph<
-  //       TT_DATA_, TT_TWIDDLE_, TP_POINT_SIZE, TP_FFT_NIFFT, TP_SHIFT,
-  //       TP_CASC_LEN, TP_DYN_PT_SIZE, TP_WINDOW_VSIZE, TP_API,
-  //       TP_PARALLEL_POWER, TP_USE_WIDGETS> fft_kernel;
   xf::dsp::aie::fft::dit_1ch::fft_ifft_dit_1ch_graph<
-      TT_DATA_, TT_TWIDDLE_, TP_POINT_SIZE, TP_FFT_NIFFT, TP_SHIFT, TP_CASC_LEN,
-      TP_DYN_PT_SIZE, TP_POINT_SIZE, TP_API, TP_PARALLEL_POWER,
-      TP_USE_WIDGETS>
+      cfloat,                      // TT_DATA
+      cfloat,                      // TT_TWIDDLE
+      TP_POINT_SIZE,               // TP_POINT_SIZE
+      1,                           // TP_FFT_NIFFT
+      0,                           // TP_SHIFT
+      1,                           // TP_CASC_LEN
+      0,                           // TP_DYN_PT_SIZE
+      TP_POINT_SIZE * N_BATCH_FFT, // TP_WINDOW_VSIZE
+      0,                           // TP_API
+      0,                           // TP_PARALLEL_POWER
+      0                            // TP_USE_WIDGETS
+      >
       fft_kernel;
   adf::kernel twd_mult_kernel;
   //   adf::kernel distributer_kernel, collector_kernel;

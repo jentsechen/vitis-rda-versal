@@ -38,12 +38,18 @@ for(int i=0; i<1024; i++){
 ```
 
 ## Implementation Result
-| no parallelism | row-wise FFT with 4-parallelism and 2-batch |
+<!-- | no parallelism | row-wise FFT with 4-parallelism and 2-batch |
 | :---: | :---: |
 | col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 72613 us <br> row time req.: 20494 us <br> total time req.: 93156 us |
 |![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_paral/aie_util.png)|
 |![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_paral/graph.png)|
-|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_paral/array.png)|
+|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_paral/array.png)| -->
+| no parallelism | col-wise proc. with 2-batch and row-wise proc. with 2-parallelism and 2-batch |
+| :---: | :---: |
+| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 59458 us <br> row time req.: 23440 us <br> total time req.: 82948 us |
+|![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_aie_util.png)|
+|![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_graph.png)|
+|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_array.png)|
 
 # Comparing with GPU
 * Raw data: 1024x22016 pixels

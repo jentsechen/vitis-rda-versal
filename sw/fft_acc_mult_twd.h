@@ -12,7 +12,7 @@
 #include <vector>
 
 const size_t n_iter = 1024;
-const size_t n_paral = 4;
+const size_t n_paral = 2;
 const size_t n_byte_per_sample = 8;
 const size_t n_sample_per_iter = 1024;
 const size_t n_sample_per_paral = n_iter * n_sample_per_iter / n_paral;

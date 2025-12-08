@@ -27,8 +27,9 @@ HOST_EXE = host.exe
 
 GRAPH    = aie/graph.cpp
 LIBADF  = libadf.a
-FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
+# FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
 FFTStridedMM2SBat = ./hls/fft_strided_mm2s_bat/fft_strided_mm2s_bat.xo
+# FFTStridedMM2SBatFanOut = ./hls/fft_strided_mm2s_bat_fan_out/fft_strided_mm2s_bat_fan_out.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			-I../Vitis_Libraries/dsp/L1/include/aie \
@@ -103,8 +104,12 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedS2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${FFTStridedMM2S} ${LIBADF} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
-${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
