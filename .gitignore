@@ -29,6 +29,8 @@ hls/fft_strided_mm2s/
 hls/fft_strided_mm2s_bat/
 hls/fft_strided_mm2s_bat_fan_out/
 hls/fft_strided_s2mm/
+hls/uram_controller/
+hls/hls/
 
 sw/cnpy/
 sw/aie_control_xrt.*

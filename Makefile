@@ -29,6 +29,7 @@ GRAPH    = aie/graph.cpp
 LIBADF  = libadf.a
 # FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
 FFTStridedMM2SBat = ./hls/fft_strided_mm2s_bat/fft_strided_mm2s_bat.xo
+UramController = ./hls/uram_controller/uram_controller.xo
 # FFTStridedMM2SBatFanOut = ./hls/fft_strided_mm2s_bat_fan_out/fft_strided_mm2s_bat_fan_out.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
@@ -39,8 +40,8 @@ AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			--aie.constraints="aie_constraints.json" \
 			${GRAPH} 2>&1 | tee log.txt
 AIE_SIM_CMD = aiesimulator --pkg-dir=./Work --dump-vcd foo
-HLS_CMPL_CMD = v++ -c --mode hls --platform ${PLATFORM} --config ./hls/fft_strided_mm2s.cfg
 EMU_CMD = ./launch_hw_emu.sh
+HLS_SOURCES := $(wildcard hls/*.cpp) $(wildcard hls/*.h) $(wildcard hls/*.cfg)
 
 ##########################################################################################################################################################
 ### DO NOT MODIFY BELOW THIS LINE UNLESS NECESSARY
@@ -95,8 +96,10 @@ aiesim: ${LIBADF}
 # hls: hls/*
 # 	${HLS_CMPL_CMD}
 
-hls: hls/*
-	make all -C hls
+.PHONY: hls
+hls: $(HLS_SOURCES)
+	$(MAKE) -C hls clean
+	$(MAKE) -C hls all
 
 xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 
@@ -106,10 +109,12 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
-${XSA}: ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${FFTStridedMM2SBat} ${LIBADF} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${UramController} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
