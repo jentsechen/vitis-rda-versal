@@ -10,29 +10,44 @@ def print_info(data):
     print("Data type: ", data.dtype)
     print("Dimensions: ", data.ndim)
 
+def transpose(input):
+    output = []
+    for i in range(1024):
+        output_tmp = []
+        for j in range(1024):
+            output_tmp.append(input[i+j*1024])
+        output = np.concatenate([output, output_tmp])
+    return np.array(output)
+
 if __name__ == "__main__":
-    result_acc_mult_twd = np.load("output.npy")
-    print_info(result_acc_mult_twd)
+    input = np.load("data_rx_10_complex_64.npy")[0]
+    print(len(input))
+    input_zp = np.concatenate([input, np.zeros(2**20-len(input))])
+    output_golden = np.fft.fft(input_zp)
+    output = np.load("output.npy")
+    print_info(output)
+    print(len(output))
 
-    result_dds_twd = np.load("output_dds_twd.npy")
+    fft_size = 2**10
+    figure = make_subplots(rows=2, cols=1)
+    start = 64
+    # result = output[start*fft_size:(start+1)*fft_size]
+    result = output[start::fft_size]
+    golden = output_golden[start*fft_size:(start+1)*fft_size]
+    figure.add_trace(go.Scatter(y=result.real), row=1, col=1)
+    figure.add_trace(go.Scatter(y=golden.real), row=1, col=1)
+    figure.add_trace(go.Scatter(y=result.imag), row=2, col=1)
+    figure.add_trace(go.Scatter(y=golden.imag), row=2, col=1)
+    figure.write_html("result.html")
+    # for i in range(21):
+    #     result = output[i*fft_size:(i+1)*fft_size]
+    #     golden = np.fft.fft(input_zp[i*fft_size:(i+1)*fft_size])
+    #     print(sum(abs(result-golden)**2))
 
-    input = np.load("data_rx_1024_complex_64.npy")[0]
-    golden = np.fft.fft(input, 2**20)
-
-    # figure = make_subplots(rows=2, cols=1)
-    # figure.add_trace(go.Scatter(y=result_dds_twd.real, name="result (dds twd), re."), row=1, col=1)
-    # figure.add_trace(go.Scatter(y=result_dds_twd.imag, name="result (dds twd), im."), row=2, col=1)
-    # figure.add_trace(go.Scatter(y=result_acc_mult_twd.real, name="result (acc mult twd), re."), row=1, col=1)
-    # figure.add_trace(go.Scatter(y=result_acc_mult_twd.imag, name="result (acc mult twd), im."), row=2, col=1)
-    # figure.add_trace(go.Scatter(y=golden.real, name="golden, re."), row=1, col=1)
-    # figure.add_trace(go.Scatter(y=golden.imag, name="golden, im."), row=2, col=1)
-    # figure.write_html("result.html")
-
-    sig_pow = sum(abs(golden)**2)
-    noise_pow_dds_twd = sum(abs(result_dds_twd-golden)**2)
-    noise_pow_acc_mult_twd = sum(abs(result_acc_mult_twd-golden)**2)
-    snr_dds_twd = 10*np.log10(sig_pow/noise_pow_dds_twd)
-    snr_acc_mult_twd = 10*np.log10(sig_pow/noise_pow_acc_mult_twd)
-    print(snr_dds_twd, snr_acc_mult_twd)
+    output_row_fft_opt = np.load("output_row_fft_opt.npy")
+    error = sum(abs(transpose(output_row_fft_opt)-output_golden)**2)
+    print(error)
+    error = sum(abs(transpose(output_golden)-output)**2)
+    print(error)
 
     print("done")
