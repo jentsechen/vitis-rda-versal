@@ -1,6 +1,6 @@
 #!/bin/bash
 USER="petalinux"
-HOST="10.100.70.19"
+HOST="10.100.70.15"
 PASS="petalinux"
 REMOTE_FILE="/home/petalinux/output.npy"
 LOCAL_PATH="$(pwd)"  # Save to the folder where the script is called

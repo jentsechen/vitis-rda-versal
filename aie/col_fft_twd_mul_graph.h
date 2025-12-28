@@ -31,7 +31,8 @@ public:
   //   adf::input_gmio col_fft_twd_mul_in;
   adf::input_plio col_fft_twd_mul_in_0, col_fft_twd_mul_in_1;
   //   adf::input_plio col_fft_twd_mul_in_0;
-  adf::output_gmio col_fft_twd_mul_out_0, col_fft_twd_mul_out_1;
+  //   adf::output_gmio col_fft_twd_mul_out_0, col_fft_twd_mul_out_1;
+  adf::output_plio col_fft_twd_mul_out_0, col_fft_twd_mul_out_1;
   //   adf::output_gmio col_fft_twd_mul_out_0;
 
   ColFftTwdMulGraph() {
@@ -41,10 +42,14 @@ public:
         input_plio::create("col_fft_twd_mul_in_0", adf::plio_64_bits);
     col_fft_twd_mul_in_1 =
         input_plio::create("col_fft_twd_mul_in_1", adf::plio_64_bits);
+    // col_fft_twd_mul_out_0 =
+    //     adf::output_gmio::create("col_fft_twd_mul_out_0", 64, 1000);
+    // col_fft_twd_mul_out_1 =
+    //     adf::output_gmio::create("col_fft_twd_mul_out_1", 64, 1000);
     col_fft_twd_mul_out_0 =
-        adf::output_gmio::create("col_fft_twd_mul_out_0", 64, 1000);
+        output_plio::create("col_fft_twd_mul_out_0", adf::plio_64_bits);
     col_fft_twd_mul_out_1 =
-        adf::output_gmio::create("col_fft_twd_mul_out_1", 64, 1000);
+        output_plio::create("col_fft_twd_mul_out_1", adf::plio_64_bits);
 
     twd_mult_kernel = adf::kernel::create(twd_mult);
     source(twd_mult_kernel) = "./twd_mult_0.cpp";

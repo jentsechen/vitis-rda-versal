@@ -30,6 +30,8 @@ hls/fft_strided_mm2s_bat/
 hls/fft_strided_mm2s_bat_fan_out/
 hls/fft_strided_s2mm/
 hls/uram_controller/
+hls/mm2s/
+hls/s2mm/
 hls/hls/
 
 sw/cnpy/

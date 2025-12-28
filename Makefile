@@ -30,6 +30,8 @@ LIBADF  = libadf.a
 # FFTStridedMM2S = ./hls/fft_strided_mm2s/fft_strided_mm2s.xo
 FFTStridedMM2SBat = ./hls/fft_strided_mm2s_bat/fft_strided_mm2s_bat.xo
 UramController = ./hls/uram_controller/uram_controller.xo
+MM2S = ./hls/mm2s/mm2s.xo
+S2MM = ./hls/s2mm/s2mm.xo
 # FFTStridedMM2SBatFanOut = ./hls/fft_strided_mm2s_bat_fan_out/fft_strided_mm2s_bat_fan_out.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
@@ -113,8 +115,10 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2SBat} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
-${XSA}: ${UramController} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${UramController} ${VPP_SPEC} 
+# 	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
+${XSA}: ${MM2S} ${S2MM} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -g -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 

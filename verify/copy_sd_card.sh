@@ -1,6 +1,6 @@
 #!/bin/bash
 USER="petalinux"
-HOST="10.100.70.19"
+HOST="10.100.70.15"
 PASS="petalinux"
 REMOTE_PATH="."
 LOCAL_PATH="/media/jtc/Data/2024.2/Vitis/rda_dev_gmio/sd_card"
