@@ -118,7 +118,9 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # ${XSA}: ${UramController} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
 ${XSA}: ${MM2S} ${S2MM} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -g -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+	${VCC} -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} \
+			--debug.chipscope mm2s_0:s \
+			-t ${TARGET} ${VPP_FLAGS} -o $@
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 

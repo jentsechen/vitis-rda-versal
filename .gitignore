@@ -23,6 +23,7 @@ sd_card/
 *.exe
 *.a
 *.txt
+*.ltx
 
 hls/.Xil/
 hls/fft_strided_mm2s/
