@@ -3,7 +3,7 @@
 std::vector<std::complex<float>>
 fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
                  const std::complex<float> *input_data, size_t input_n_sample) {
-  int n_batch = 2;
+  int n_batch = 1;
   // AIE kernels
   auto col_fft_twd_mul_rhdl = xrt::graph(device, uuid, "col_fft_twd_mul_graph");
   //   auto row_fft_graph_hdl = xrt::graph(device, uuid, "row_fft_graph");
@@ -53,12 +53,17 @@ fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
 
   auto start = std::chrono::high_resolution_clock::now();
   in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
-  mm2s_0(in_buf, n_sample_per_paral, 0);
-  mm2s_1(in_buf, n_sample_per_paral, n_sample_per_paral);
+  auto run_mm2s_0 = mm2s_0(in_buf, n_sample_per_paral, 0);
+  auto run_mm2s_1 = mm2s_1(in_buf, n_sample_per_paral, n_sample_per_paral);
   col_fft_twd_mul_rhdl.run(n_iter / (n_paral * n_batch));
-  s2mm_0(row_fft_in_buf, n_sample_per_paral, 0);
-  s2mm_1(row_fft_in_buf, n_sample_per_paral, n_sample_per_paral);
-  row_fft_in_buf.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
+  auto run_s2mm_0 = s2mm_0(row_fft_in_buf, n_sample_per_paral, 0);
+  auto run_s2mm_1 =
+      s2mm_1(row_fft_in_buf, n_sample_per_paral, n_sample_per_paral);
+  run_mm2s_0.wait();
+  run_mm2s_1.wait();
+  run_s2mm_0.wait();
+  run_s2mm_1.wait();
+  col_fft_twd_mul_rhdl.wait();
   col_fft_twd_mul_rhdl.end();
   auto end0 = std::chrono::high_resolution_clock::now();
   std::cout << "time req. of col. FFT: "

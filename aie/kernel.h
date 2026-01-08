@@ -1,11 +1,11 @@
 #ifndef __kernel__
 #define __kernel__
+#include "sub_fft_par.h"
 #include <adf.h>
 #include <aie_api/aie.hpp>
-#define SUB_FFT_SIZE 1024
+
 #define VEC_SIZE 8
 #define BLOCK_SIZE SUB_FFT_SIZE / VEC_SIZE
-#define N_BATCH 2
 
 void widget_distributer_level0(input_stream<cfloat> *in,
                                output_stream<cfloat> *out0,

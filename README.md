@@ -46,7 +46,7 @@ for(int i=0; i<1024; i++){
 |![](./imp_result/array_acc_mult.png)|![](./imp_result/row_paral/array.png)| -->
 | no parallelism | col-wise proc. with 2-batch and row-wise proc. with 2-parallelism and 2-batch | both col-wise and row-wise proc. with 2-parallelism and 2-batch |
 | :---: | :---: | :---: |
-| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 59458 us <br> row time req.: 23440 us <br> total time req.: 82948 us | col. time req.: 2968 us <br> row time req.: TODO <br> total time req.: TODO |
+| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 59458 us <br> row time req.: 23440 us <br> total time req.: 82948 us | col. time req.: 2941 us <br> row time req.: TODO <br> total time req.: TODO |
 |![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_aie_util.png)||
 |![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_graph.png)||
 |![](./imp_result/array_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_array.png)||

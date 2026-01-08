@@ -16,7 +16,7 @@ private:
       0,                           // TP_SHIFT
       1,                           // TP_CASC_LEN
       0,                           // TP_DYN_PT_SIZE
-      TP_POINT_SIZE * N_BATCH_FFT, // TP_WINDOW_VSIZE
+      TP_POINT_SIZE * N_BATCH, // TP_WINDOW_VSIZE
       0,                           // TP_API
       0,                           // TP_PARALLEL_POWER
       0                            // TP_USE_WIDGETS
