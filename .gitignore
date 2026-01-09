@@ -25,6 +25,9 @@ sd_card/
 *.a
 *.txt
 *.ltx
+*.npy
+*.pdi
+aie_primitive.json
 
 hls/.Xil/
 hls/fft_strided_mm2s/
@@ -35,6 +38,7 @@ hls/uram_controller/
 hls/mm2s/
 hls/s2mm/
 hls/tile_transpose
+hls/direct_transpose
 hls/hls/
 
 sw/cnpy/
