@@ -5,6 +5,7 @@ _x/
 cfg/
 extracted/
 sim/
+drivers/
 
 Work/
 sd_card/
@@ -33,6 +34,7 @@ hls/fft_strided_s2mm/
 hls/uram_controller/
 hls/mm2s/
 hls/s2mm/
+hls/tile_transpose
 hls/hls/
 
 sw/cnpy/

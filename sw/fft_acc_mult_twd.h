@@ -19,7 +19,7 @@ const size_t n_sample_per_paral = n_iter * n_sample_per_iter / n_paral;
 const size_t block_size_in_byte =
     n_iter * n_sample_per_iter * n_byte_per_sample;
 
-std::vector<std::complex<float>>
+std::pair<std::vector<std::complex<float>>, std::vector<std::complex<float>>>
 fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
                  const std::complex<float> *input_data, size_t input_n_sample);
 #endif

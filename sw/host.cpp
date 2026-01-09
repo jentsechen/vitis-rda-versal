@@ -32,11 +32,14 @@ int main(int argc, char **argv) {
   auto uuid = device.load_xclbin(xclbinFilename);
 
   // auto output = fft_dds_twd(device, uuid, DataInput, arr.shape[1]);
-  auto output = fft_acc_mult_twd(device, uuid, DataInput, arr.shape[1]);
+  std::pair<std::vector<std::complex<float>>, std::vector<std::complex<float>>>
+      out_pair = fft_acc_mult_twd(device, uuid, DataInput, arr.shape[1]);
   //   auto output = uram_ctrl(device, uuid, DataInput, arr.shape[1]);
 
-  cnpy::npy_save("output.npy", output.data(), {n_iter * n_sample_per_iter},
-                 "w");
+  cnpy::npy_save("col_proc_out.npy", out_pair.first.data(),
+                 {n_iter * n_sample_per_iter}, "w");
+  cnpy::npy_save("row_proc_out.npy", out_pair.second.data(),
+                 {n_iter * n_sample_per_iter}, "w");
 
   std::cout << "Done!" << std::endl;
 

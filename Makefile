@@ -32,6 +32,7 @@ FFTStridedMM2SBat = ./hls/fft_strided_mm2s_bat/fft_strided_mm2s_bat.xo
 UramController = ./hls/uram_controller/uram_controller.xo
 MM2S = ./hls/mm2s/mm2s.xo
 S2MM = ./hls/s2mm/s2mm.xo
+TILE_TRANSPOSE = ./hls/tile_transpose/tile_transpose.xo
 # FFTStridedMM2SBatFanOut = ./hls/fft_strided_mm2s_bat_fan_out/fft_strided_mm2s_bat_fan_out.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
@@ -117,10 +118,13 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${FFTStridedMM2S} ${FFTStridedMM2SBatFanOut} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 # ${XSA}: ${UramController} ${VPP_SPEC} 
 # 	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
-${XSA}: ${MM2S} ${S2MM} ${LIBADF} ${VPP_SPEC} 
-	${VCC} -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} \
-			--debug.chipscope mm2s_0:s \
+${XSA}: ${MM2S} ${S2MM} ${TILE_TRANSPOSE} ${LIBADF} ${VPP_SPEC} 
+	${VCC} -l -g --platform ${PLATFORM} ${MM2S} ${S2MM} ${TILE_TRANSPOSE} ${LIBADF} \
+			--debug.chipscope tile_transpose_0:s \
+			--debug.chipscope s2mm_2:s \
 			-t ${TARGET} ${VPP_FLAGS} -o $@
+# --debug.chipscope mm2s_0:s \
+# --vivado.prop run.impl_1.STEPS.OPT_DESIGN.TCL.PRE=./modify_ila.tcl \
 
 host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
