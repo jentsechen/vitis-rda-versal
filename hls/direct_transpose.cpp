@@ -6,19 +6,24 @@
 #define COL_SIZE 64
 
 void direct_transpose(ap_int<SAMPLE_BIT_WIDTH> *mem, int mem_offset,
-                    hls::stream<ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0>> &s) {
+                      hls::stream<ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0>> &s0,
+                      hls::stream<ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0>> &s1) {
 #pragma HLS INTERFACE m_axi port = mem offset = slave bundle = gmem
-#pragma HLS INTERFACE axis port = s
+#pragma HLS INTERFACE axis port = s0
+#pragma HLS INTERFACE axis port = s1
 #pragma HLS INTERFACE s_axilite port = mem bundle = control
 #pragma HLS INTERFACE s_axilite port = mem_offset bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  for (int col_index = 0; col_index < COL_SIZE; col_index++) {
+  for (int col_index = 0; col_index < COL_SIZE / 2; col_index++) {
     for (int row_index = 0; row_index < ROW_SIZE; row_index++) {
 #pragma HLS PIPELINE II = 1
-      ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x;
-      x.data = mem[row_index * 1024 + col_index + mem_offset];
-      s.write(x);
+      ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x0;
+      x0.data = mem[row_index * 1024 + col_index + mem_offset];
+      s0.write(x0);
+      ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x1;
+      x1.data = mem[row_index * 1024 + col_index + mem_offset + 32];
+      s1.write(x1);
     }
   }
 }

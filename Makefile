@@ -120,8 +120,10 @@ xsa: guard-PLATFORM_REPO_PATHS ${XSA}
 # 	${VCC} -g -l --platform ${PLATFORM} ${UramController} -t ${TARGET} ${VPP_FLAGS} -o $@
 ${XSA}: ${MM2S} ${S2MM} ${TILE_TRANSPOSE} ${LIBADF} ${VPP_SPEC} 
 	${VCC} -l -g --platform ${PLATFORM} ${MM2S} ${S2MM} ${TILE_TRANSPOSE} ${LIBADF} \
-			--debug.chipscope tile_transpose_0:s \
+			--debug.chipscope tile_transpose_0:s0 \
+			--debug.chipscope tile_transpose_0:s1 \
 			--debug.chipscope s2mm_2:s \
+			--debug.chipscope s2mm_3:s \
 			-t ${TARGET} ${VPP_FLAGS} -o $@
 # --debug.chipscope mm2s_0:s \
 # --vivado.prop run.impl_1.STEPS.OPT_DESIGN.TCL.PRE=./modify_ila.tcl \
