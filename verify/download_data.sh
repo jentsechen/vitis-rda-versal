@@ -1,6 +1,6 @@
 #!/bin/bash
 USER="petalinux"
-HOST="10.100.70.2"
+HOST="10.100.70.15"
 PASS="petalinux"
 REMOTE_COL_PROC_OUT="/home/petalinux/col_proc_out.npy"
 REMOTE_ROW_PROC_OUT="/home/petalinux/row_proc_out.npy"

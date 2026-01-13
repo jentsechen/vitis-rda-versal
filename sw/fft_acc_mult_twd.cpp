@@ -21,8 +21,8 @@ fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
   auto mm2s_1 = xrt::kernel(device, uuid, "mm2s:{mm2s_1}");
   auto s2mm_0 = xrt::kernel(device, uuid, "s2mm:{s2mm_0}");
   auto s2mm_1 = xrt::kernel(device, uuid, "s2mm:{s2mm_1}");
-  auto s2mm_2 = xrt::kernel(device, uuid, "s2mm:{s2mm_2}");
-  auto s2mm_3 = xrt::kernel(device, uuid, "s2mm:{s2mm_3}");
+  auto tile_s2mm_0 = xrt::kernel(device, uuid, "tile_s2mm:{tile_s2mm_0}");
+  auto tile_s2mm_1 = xrt::kernel(device, uuid, "tile_s2mm:{tile_s2mm_1}");
   auto tile_transpose_0 =
       xrt::kernel(device, uuid, "tile_transpose:{tile_transpose_0}");
 
@@ -71,16 +71,15 @@ fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
   auto start1 = std::chrono::high_resolution_clock::now();
   row_fft_in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
   auto run_tile_transpose_0 = tile_transpose_0(row_fft_in_buf, 0);
-  row_fft_graph_hdl.run(32);
-  //   auto run_s2mm_2 = s2mm_2(out_buf, n_sample_per_paral, 0);
-  //   auto run_s2mm_3 = s2mm_3(out_buf, n_sample_per_paral,
-  //   n_sample_per_paral);
-  auto run_s2mm_2 = s2mm_2(out_buf, n_sample_per_iter * 32, 0);
-  auto run_s2mm_3 =
-      s2mm_3(out_buf, n_sample_per_iter * 32, n_sample_per_iter * 32);
+  row_fft_graph_hdl.run(32 * 16);
+  auto run_tile_s2mm_0 = tile_s2mm_0(out_buf, 16, n_sample_per_iter * 64,
+                                     n_sample_per_iter * 32, 0, 0);
+  auto run_tile_s2mm_1 =
+      tile_s2mm_1(out_buf, 16, n_sample_per_iter * 64, n_sample_per_iter * 32,
+                  n_sample_per_iter * 32, 0);
   run_tile_transpose_0.wait();
-  run_s2mm_2.wait();
-  run_s2mm_3.wait();
+  run_tile_s2mm_0.wait();
+  run_tile_s2mm_1.wait();
   row_fft_graph_hdl.wait();
   row_fft_graph_hdl.end();
   auto end = std::chrono::high_resolution_clock::now();

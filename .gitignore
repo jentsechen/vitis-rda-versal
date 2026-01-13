@@ -37,6 +37,7 @@ hls/fft_strided_s2mm/
 hls/uram_controller/
 hls/mm2s/
 hls/s2mm/
+hls/tile_s2mm/
 hls/tile_transpose
 hls/direct_transpose
 hls/hls/
