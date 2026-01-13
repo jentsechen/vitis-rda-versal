@@ -21,37 +21,32 @@ bash download_data.sh
 python3 verify_output.py
 ```
 
-## PS Flow Control
-```c
-// column-wise operation
-for(int i=0; i<1024; i++){
-    move_data_from_ddr_to_aie();
-    trigger_fft_1024_twd_mult_graph();
-    move_data_from_aie_to_ddr();
-}
-// row-wise operation
-for(int i=0; i<1024; i++){
-    move_data_from_ddr_to_aie();
-    trigger_fft_1024_graph();
-    move_data_from_aie_to_ddr();
-}
-```
-
 ## Implementation Result
-<!-- | no parallelism | row-wise FFT with 4-parallelism and 2-batch |
-| :---: | :---: |
-| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 72613 us <br> row time req.: 20494 us <br> total time req.: 93156 us |
-|![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_paral/aie_util.png)|
-|![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_paral/graph.png)|
-|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_paral/array.png)| -->
-| no parallelism | col-wise proc. with 2-batch and row-wise proc. with 2-parallelism and 2-batch | both col-wise and row-wise proc. with 2-parallelism and 2-batch |
+| no parallelism | col.-wise proc. with 2-batch and row-wise proc. with 2-parallelism and 2-batch | both col.-wise and row-wise proc. with 2-parallelism and scheduling by PL |
 | :---: | :---: | :---: |
-| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 59458 us <br> row time req.: 23440 us <br> total time req.: 82948 us | col. time req.: 2941 us <br> row time req.: TODO <br> total time req.: TODO |
-|![](./imp_result/AIE_util_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_aie_util.png)||
-|![](./imp_result/graph_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_graph.png)||
-|![](./imp_result/array_acc_mult.png)|![](./imp_result/row_col_opt/cfg_0_array.png)||
-|||![](./imp_result/pl_scheduling/block_design.png)|
-|||![](./imp_result/pl_scheduling/utilization.png)|
+| col. time req.: 79658 us <br> row time req.: 80362 us <br> total time req.: 160070 us | col. time req.: 59458 us <br> row time req.: 23440 us <br> total time req.: 82948 us | col. time req.: 2975 us <br> row time req.: 3711 us <br> total time req.: 6816 us |
+|![](./diagram/AIE_util_acc_mult.png)|![](./diagram/row_col_opt/cfg_0_aie_util.png)|![](./diagram/pl_scheduling/aie_util.png)|
+|![](./diagram/graph_acc_mult.png)|![](./diagram/row_col_opt/cfg_0_graph.png)|![](./diagram/pl_scheduling/aie_graph.png)|
+|![](./diagram/array_acc_mult.png)|![](./diagram/row_col_opt/cfg_0_array.png)|![](./diagram/pl_scheduling/aie_array.png)|
+
+### Scheduling by PL
+* time requirement
+    * col.-wise proc.: (3041+2946+2953+2968+2917+2952+2945+3039+3001+2988)/10 = 2975.0 us
+    * row-wise proc.: (3774+3786+3782+3783+3777+3786+3781+3883+3774+2988)/10 = 3711.4 us
+    * total: (6863+6781+6782+6799+6761+6787+6775+6971+6823+6822)/10 = 6816.4 us
+* block design
+
+|![](./diagram/pl_scheduling/pl_blk_des_0.png)|![](./diagram/pl_scheduling/pl_blk_des_1.png)|
+|:---:|:---:|
+
+* utilization
+![](./diagram/pl_scheduling/pl_util.png)
+
+* NOC QoS
+![](./diagram/pl_scheduling/noc_qos.png)
+
+## Tile Wise Transpose IP
+Refer to [Tile Wise Transpose IP](./document/tile_wise_transpose_ip.md)
 
 # Comparing with GPU
 * Raw data: 1024x22016 pixels
