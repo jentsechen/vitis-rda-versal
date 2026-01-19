@@ -1,4 +1,4 @@
-## How to compile
+## How to Compile
 ```
 make aie        // if update aie design
 make hls        // if update hls design
@@ -6,7 +6,7 @@ make xsa        // if update aie or hls
 make host       // if update xsa or host design
 make package    // if update host
 ```
-## How to verify
+## How to Verify
 ```bash
 # Host side
 cd verify
@@ -48,8 +48,10 @@ Refer to [Hardware Emulation](./document/hardware_emulation.md)
 * NOC QoS
 ![](./diagram/pl_scheduling/noc_qos.png)
 
-## Tile Wise Transpose IP
-Refer to [Tile Wise Transpose IP](./document/tile_wise_transpose_ip.md)
+## Digital IP
+* [Tile Wise Transpose IP](./document/tile_wise_transpose_ip.md)
+* Tile S2MM IP
+![](./diagram//tile_s2mm_ip/tile_s2mm_ip.png)
 
 # Comparing with GPU
 * Raw data: 1024x22016 pixels
