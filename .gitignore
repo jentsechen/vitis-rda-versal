@@ -6,6 +6,7 @@ cfg/
 extracted/
 sim/
 drivers/
+*.jou
 
 Work/
 sd_card/
@@ -50,3 +51,9 @@ make
 verify/*.html
 verify/data_rx_1024_complex_64.npy
 verify/output.npy
+verify/golden_gen/
+
+# hardware emulation
+emu_qemu_scripts/
+launch_hw_emu.sh
+qemu_resize_img.sh

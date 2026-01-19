@@ -24,7 +24,7 @@ using namespace std;
 int main(int argc, char **argv) {
   cnpy::NpyArray arr = cnpy::npy_load(argv[2]);
   assert(arr.shape[0] > 0 && arr.shape[1] > 0);
-  //   std::cout << "number of values: " << arr.shape[1] << std::endl;
+  std::cout << "number of values: " << arr.shape[1] << std::endl;
   const complex<float> *DataInput = arr.data<complex<float>>();
 
   char *xclbinFilename = argv[1];

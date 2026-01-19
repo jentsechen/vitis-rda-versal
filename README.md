@@ -21,6 +21,9 @@ bash download_data.sh
 python3 verify_output.py
 ```
 
+## How to Run Hardware Emulation
+Refer to [Hardware Emulation](./document/hardware_emulation.md)
+
 ## Implementation Result
 | no parallelism | col.-wise proc. with 2-batch and row-wise proc. with 2-parallelism and 2-batch | both col.-wise and row-wise proc. with 2-parallelism and scheduling by PL |
 | :---: | :---: | :---: |
