@@ -5,8 +5,8 @@ fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
                  const std::complex<float> *input_data, size_t input_n_sample) {
   int n_batch = 2;
   // AIE kernels
-  auto col_fft_twd_mul_rhdl = xrt::graph(device, uuid, "col_fft_twd_mul_graph");
-  //   auto row_fft_graph_hdl = xrt::graph(device, uuid, "row_fft_graph");
+  auto col_fft_twd_mul_rhdl = xrt::graph(device, uuid, "ReplicaColProcGraphTest");
+  //   auto row_fft_graph_hdl = xrt::graph(device, uuid, "ReplicaRowProcGraph");
 
   // PL kernels
   //   auto row_fft_mm2s_0 = xrt::kernel(
@@ -83,7 +83,7 @@ fft_acc_mult_twd(xrt::device &device, const xrt::uuid &uuid,
   //         n_sample_per_iter * n_byte_per_sample * n_batch,
   //         iter * n_sample_per_iter * n_byte_per_sample * n_batch);
   //     auto out_buf_run_1 = out_buf[1].async(
-  //         "row_fft_graph.row_fft_out_1", XCL_BO_SYNC_BO_AIE_TO_GMIO,
+  //         "ReplicaRowProcGraph.row_fft_out_1", XCL_BO_SYNC_BO_AIE_TO_GMIO,
   //         n_sample_per_iter * n_byte_per_sample * n_batch,
   //         iter * n_sample_per_iter * n_byte_per_sample * n_batch);
   //     out_buf_run_0.wait();

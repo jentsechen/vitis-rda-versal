@@ -5,17 +5,19 @@
 #include <unistd.h>
 using namespace adf;
 
-ColFftTwdMulGraph col_fft_twd_mul_graph;
-// RowFftGraph row_fft_graph;
+ColFftTwdMulGraph  ReplicaColProcGraphTest; // col_fft_twd_mul_graph; // ReplicaColProcGraphTest
+RowFftGraph ReplicaRowProcGraph; // row_fft_graph; // ReplicaRowProcGraph
 
+// test
+// test
 #if defined(__AIESIM__) || defined(__X86SIM__)
 int main(int argc, char **argv) {
-  col_fft_twd_mul_graph.init();
-  col_fft_twd_mul_graph.run(1);
-  col_fft_twd_mul_graph.end();
-//   row_fft_graph.init();
-//   row_fft_graph.run(1);
-//   row_fft_graph.end();
+  ReplicaColProcGraphTest.init();
+  ReplicaColProcGraphTest.run(1);
+  ReplicaColProcGraphTest.end();
+  ReplicaRowProcGraph.init();
+  ReplicaRowProcGraph.run(1);
+  ReplicaRowProcGraph.end();
   return 0;
 };
 #endif

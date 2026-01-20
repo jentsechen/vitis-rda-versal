@@ -1,4 +1,4 @@
-PLATFORM=/media/jtc/Data/2024.2/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/xilinx_vck190_base_202420_1.xpfm
+PLATFORM=/mnt/workspace/Xilinx/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/xilinx_vck190_base_202420_1.xpfm
 
 fft_strided_mm2s = ./fft_strided_mm2s/fft_strided_mm2s.xo
 mm2s = ./mm2s/mm2s.xo

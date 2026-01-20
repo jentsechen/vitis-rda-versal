@@ -4,8 +4,8 @@ std::vector<std::complex<float>>
 fft_dds_twd(xrt::device &device, const xrt::uuid &uuid,
             const std::complex<float> *input_data, size_t input_n_sample) {
   // AIE kernels
-  auto col_fft_twd_mul_rhdl = xrt::graph(device, uuid, "col_fft_twd_mul_graph");
-  auto row_fft_graph_hdl = xrt::graph(device, uuid, "row_fft_graph");
+  auto col_fft_twd_mul_rhdl = xrt::graph(device, uuid, "ReplicaColProcGraphTest");
+  auto row_fft_graph_hdl = xrt::graph(device, uuid, "ReplicaRowProcGraph");
 
   // PL kernels
   auto col_fft_strided_mm2s =
@@ -36,18 +36,18 @@ fft_dds_twd(xrt::device &device, const xrt::uuid &uuid,
     int32_t val = iter << 11;
     int32_t neg_val = -val;
     uint32_t neg_val_hex = static_cast<uint32_t>(neg_val);
-    col_fft_twd_mul_rhdl.update("col_fft_twd_mul_graph.PhaseIncRTP",
+    col_fft_twd_mul_rhdl.update("ReplicaColProcGraphTest.PhaseIncRTP",
                                 neg_val_hex);
     uint32_t phase = (iter == 0 || iter == 1)
                          ? 0
                          : (iter_sum << 11) * (n_sample_per_iter - 1);
-    col_fft_twd_mul_rhdl.update("col_fft_twd_mul_graph.PhaseRTP", phase);
+    col_fft_twd_mul_rhdl.update("ReplicaColProcGraphTest.PhaseRTP", phase);
     auto col_fft_strided_mm2s_rhdl = col_fft_strided_mm2s(in_buf, iter);
     col_fft_twd_mul_rhdl.run(1);
     col_fft_strided_mm2s_rhdl.wait();
     col_fft_twd_mul_rhdl.wait();
     auto dout_buffer_run = twd_mul_out_buf.async(
-        "col_fft_twd_mul_graph.col_fft_twd_mul_out", XCL_BO_SYNC_BO_AIE_TO_GMIO,
+        "ReplicaColProcGraphTest.col_fft_twd_mul_out", XCL_BO_SYNC_BO_AIE_TO_GMIO,
         n_sample_per_iter * n_byte_per_sample, offset);
     dout_buffer_run.wait();
     offset += (n_sample_per_iter * n_byte_per_sample);

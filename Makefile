@@ -12,9 +12,9 @@ ARCH = aie
 # else
 # $(error ARCH is not supported)
 # endif
-PLATFORM_REPO_PATHS=/media/jtc/Data/2024.2/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/
-PLATFORM=/media/jtc/Data/2024.2/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/xilinx_vck190_base_202420_1.xpfm
-COMMON_IMAGE_VERSAL=/media/jtc/Data/2024.2/xilinx-versal-common-v2024.2
+PLATFORM_REPO_PATHS=/mnt/workspace/Xilinx/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/
+PLATFORM=/mnt/workspace/Xilinx/Vitis/2024.2/base_platforms/xilinx_vck190_base_202420_1/xilinx_vck190_base_202420_1.xpfm
+COMMON_IMAGE_VERSAL=/mnt/workspace/Xilinx/xilinx-versal-common-v2024.2
 export ROOTFS=${COMMON_IMAGE_VERSAL}/rootfs.ext4
 export IMAGE=${COMMON_IMAGE_VERSAL}/Image
 # export CXX=${COMMON_IMAGE_VERSAL}/sysroots/cortexa72-cortexa53-xilinx-linux
@@ -34,12 +34,18 @@ MM2S = ./hls/mm2s/mm2s.xo
 S2MM = ./hls/s2mm/s2mm.xo
 # FFTStridedMM2SBatFanOut = ./hls/fft_strided_mm2s_bat_fan_out/fft_strided_mm2s_bat_fan_out.xo
 FFTStridedS2MM = ./hls/fft_strided_s2mm/fft_strided_s2mm.xo
+# AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
+# 			-I../Vitis_Libraries/dsp/L1/include/aie \
+# 			-I../Vitis_Libraries/dsp/L1/src/aie \
+# 			-I../Vitis_Libraries/dsp/L2/include/aie \
+# 			--include="./aie" --work_dir=./Work \
+# 			--aie.constraints="aie_constraints.json" \
+# 			${GRAPH} 2>&1 | tee log.txt
 AIE_CMPL_CMD = v++ -c --mode aie --platform=${PLATFORM} \
 			-I../Vitis_Libraries/dsp/L1/include/aie \
 			-I../Vitis_Libraries/dsp/L1/src/aie \
 			-I../Vitis_Libraries/dsp/L2/include/aie \
 			--include="./aie" --work_dir=./Work \
-			--aie.constraints="aie_constraints.json" \
 			${GRAPH} 2>&1 | tee log.txt
 AIE_SIM_CMD = aiesimulator --pkg-dir=./Work --dump-vcd foo
 EMU_CMD = ./launch_hw_emu.sh
@@ -99,8 +105,10 @@ aiesim: ${LIBADF}
 # 	${HLS_CMPL_CMD}
 
 .PHONY: hls
+# hls: $(HLS_SOURCES)
+# 	$(MAKE) -C hls clean
+# 	$(MAKE) -C hls all
 hls: $(HLS_SOURCES)
-	$(MAKE) -C hls clean
 	$(MAKE) -C hls all
 
 xsa: guard-PLATFORM_REPO_PATHS ${XSA}

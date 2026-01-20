@@ -1,9 +1,9 @@
 {
     "GlobalConstraints": {
         "areaGroup": {
-            "name": "row_fft_graph",
+            "name": "ReplicaRowProcGraph",
             "nodeGroup": [
-                "row_fft_graph.*"
+                "ReplicaRowProcGraph.*"
             ],
             "tileGroup": [
                 "(24,3):(24,4)",
@@ -13,9 +13,9 @@
             ]
         },
         "areaGroup": {
-            "name": "col_fft_twd_mul_graph",
+            "name": "ReplicaColProcGraphTest",
             "nodeGroup": [
-                "col_fft_twd_mul_graph.*"
+                "ReplicaColProcGraphTest.*"
             ],
             "tileGroup": [
                 "(24,0):(24,2)",

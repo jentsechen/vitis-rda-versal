@@ -1,5 +1,5 @@
-#ifndef __row_fft_graph__
-#define __row_fft_graph__
+#ifndef __ReplicaRowProcGraph__
+#define __ReplicaRowProcGraph__
 
 #include "../../Vitis_Libraries/dsp/L2/include/aie/fft_ifft_dit_1ch_graph.hpp"
 #include "kernel.h"
@@ -25,19 +25,22 @@ private:
 
 public:
   //   adf::input_plio row_fft_in_0, row_fft_in_1, row_fft_in_2, row_fft_in_3;
-  adf::input_plio row_fft_in_0, row_fft_in_1;
-  adf::output_gmio row_fft_out_0, row_fft_out_1;
+//   adf::input_plio row_fft_in_0, row_fft_in_1;
+//   adf::output_gmio row_fft_out_0, row_fft_out_1;
+  adf::input_plio row_fft_in_0;
+  adf::output_gmio row_fft_out_0;
 
   RowFftGraph() {
     row_fft_in_0 = input_plio::create("row_fft_in_0", adf::plio_64_bits);
-    row_fft_in_1 = input_plio::create("row_fft_in_1", adf::plio_64_bits);
+    // row_fft_in_0 = input_plio::create("row_fft_in_0", adf::plio_64_bits, "row_fft_in_0.txt");
+    // row_fft_in_1 = input_plio::create("row_fft_in_1", adf::plio_64_bits);
     row_fft_out_0 = adf::output_gmio::create("row_fft_out_0", 256, 1000);
-    row_fft_out_1 = adf::output_gmio::create("row_fft_out_1", 256, 1000);
+    // row_fft_out_1 = adf::output_gmio::create("row_fft_out_1", 256, 1000);
 
     adf::connect<>(row_fft_in_0.out[0], fft_kernel[0].in[0]);
-    adf::connect<>(row_fft_in_1.out[0], fft_kernel[1].in[0]);
+    // adf::connect<>(row_fft_in_1.out[0], fft_kernel[1].in[0]);
     adf::connect<>(fft_kernel[0].out[0], row_fft_out_0.in[0]);
-    adf::connect<>(fft_kernel[1].out[0], row_fft_out_1.in[0]);
+    // adf::connect<>(fft_kernel[1].out[0], row_fft_out_1.in[0]);
   }
 };
 
