@@ -53,6 +53,9 @@ Refer to [Hardware Emulation](./document/hardware_emulation.md)
 * Tile S2MM IP
 ![](./diagram//tile_s2mm_ip/tile_s2mm_ip.png)
 
+## Golden Generation
+[Golden Generation](./document/golden_generation.md)
+
 # Comparing with GPU
 * Raw data: 1024x22016 pixels
 * GPU

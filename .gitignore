@@ -51,7 +51,6 @@ make
 verify/*.html
 verify/data_rx_1024_complex_64.npy
 verify/output.npy
-verify/golden_gen/
 
 # hardware emulation
 emu_qemu_scripts/
