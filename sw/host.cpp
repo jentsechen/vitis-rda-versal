@@ -2,8 +2,8 @@
 #include "./cnpy/cnpy.h"
 // #include "fft_dds_twd.h"
 #include "fft_acc_mult_twd.h"
-#include "test_fft_print.h"
 // #include "uram_ctrl.h"
+#include "test_fft_print.h"
 #include "xrt/xrt_aie.h"
 #include "xrt/xrt_graph.h"
 #include "xrt/xrt_kernel.h"
@@ -14,7 +14,6 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <iomanip>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,7 +1,4 @@
 #include "test_fft_print.h"
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
 
 std::vector<std::complex<float>>
 test_fft_print(xrt::device &device, const xrt::uuid &uuid,
