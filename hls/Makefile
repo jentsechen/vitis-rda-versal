@@ -9,7 +9,7 @@ uram_controller = ./uram_controller/uram_controller.xo
 # fft_strided_s2mm = ./fft_strided_s2mm/fft_strided_s2mm.xo
 # all: $(fft_strided_mm2s) $(fft_strided_s2mm)
 # all: $(fft_strided_mm2s) $(fft_strided_mm2s_bat) $(uram_controller)
-all: $(mm2s) $(s2mm)
+all: $(mm2s) $(s2mm) $(fft_strided_mm2s)
 
 # all: $(fft_strided_mm2s) $(fft_strided_mm2s_bat_fan_out)
 
@@ -38,4 +38,4 @@ $(s2mm): s2mm.cpp s2mm.cfg
 # 	rm -r ./uram_controller
 
 clean:
-	rm -r ./mm2s ./s2mm
+	rm -r ./mm2s ./s2mm ./fft_strided_mm2s

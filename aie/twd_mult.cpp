@@ -10,15 +10,19 @@
 void twd_mult(
     adf::input_buffer<cfloat, adf::extents<SUB_FFT_SIZE * N_BATCH>> &in,
     adf::output_buffer<cfloat, adf::extents<SUB_FFT_SIZE * N_BATCH>> &out) {
+  // 準備向量迭代器 (Vector Iterators)
   auto inIter = aie::begin_vector<VEC_SIZE>(in);
   auto outIter = aie::begin_vector<VEC_SIZE>(out);
+  // 取得旋轉因子累加器 (Accumulator) 與增量 (Increment) 的指標
   aie::vector<cfloat, VEC_SIZE> *acc_ptr =
       (aie::vector<cfloat, VEC_SIZE> *)twd_factor_acc;
   const aie::vector<cfloat, VEC_SIZE> *inc_ptr =
       (const aie::vector<cfloat, VEC_SIZE> *)twd_factor_inc;
   for (int bat_idx = 0; bat_idx < N_BATCH; bat_idx++) {
     for (int i = 0; i < BLOCK_SIZE; i++) {
+      // 執行複數乘法: 輸入資料 * 旋轉因子
       *outIter++ = aie::mul(*inIter++, acc_ptr[i]);
+      // 更新旋轉因子: 累加器 * 增量
       acc_ptr[i] = aie::mul(acc_ptr[i], inc_ptr[i]);
     }
   }

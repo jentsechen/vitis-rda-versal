@@ -2,6 +2,7 @@
 #include "./cnpy/cnpy.h"
 // #include "fft_dds_twd.h"
 #include "fft_acc_mult_twd.h"
+#include "test_fft_print.h"
 // #include "uram_ctrl.h"
 #include "xrt/xrt_aie.h"
 #include "xrt/xrt_graph.h"
@@ -13,6 +14,7 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,17 +28,30 @@ int main(int argc, char **argv) {
   assert(arr.shape[0] > 0 && arr.shape[1] > 0);
   //   std::cout << "number of values: " << arr.shape[1] << std::endl;
   const complex<float> *DataInput = arr.data<complex<float>>();
+  
+  std::cout << "shape=(" << arr.shape[0] << ", " << arr.shape[1] << ")\n";
+  std::cout << "fortran_order=" << (arr.fortran_order ? "true" : "false")
+            << "\n";
+  std::cout << std::fixed << std::setprecision(8);
+  std::cout << "first row, first 10 elements:\n";
+  size_t n_print = std::min<size_t>(10, arr.shape[1]);
+  for (size_t i = 0; i < n_print; ++i) {
+    const auto &v = DataInput[i];
+    std::cout << "  [" << 0 << "," << i << "] " << v.real()
+              << (v.imag() < 0 ? "" : "+") << v.imag() << "j\n";
+  }
 
   char *xclbinFilename = argv[1];
   auto device = xrt::device(0);
   auto uuid = device.load_xclbin(xclbinFilename);
 
   // auto output = fft_dds_twd(device, uuid, DataInput, arr.shape[1]);
-  auto output = fft_acc_mult_twd(device, uuid, DataInput, arr.shape[1]);
-  //   auto output = uram_ctrl(device, uuid, DataInput, arr.shape[1]);
+  // auto output = fft_acc_mult_twd(device, uuid, DataInput, arr.shape[1]);
+  // auto output = uram_ctrl(device, uuid, DataInput, arr.shape[1]);
+  auto output = test_fft_print(device, uuid, DataInput, arr.shape[1]);
 
-  cnpy::npy_save("output.npy", output.data(), {n_iter * n_sample_per_iter},
-                 "w");
+  // cnpy::npy_save("output.npy", output.data(), {n_iter * n_sample_per_iter},
+  //                "w");
 
   std::cout << "Done!" << std::endl;
 
