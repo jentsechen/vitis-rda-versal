@@ -14,6 +14,7 @@ bash copy_sd_card.sh
 
 # FPGA side
 ./host.exe a.xclbin data_rx_1024_complex_64.npy
+./host.exe a.xclbin /mnt/rx_signal_cpx64.npy
 
 # Host side
 cd verify

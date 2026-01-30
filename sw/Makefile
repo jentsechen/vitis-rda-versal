@@ -6,8 +6,9 @@ SDKTARGETSYSROOT ?= ${SYSROOT}
 
 HOST_EXE     = ../host.exe
 # HOST_OBJ   = aie_control_xrt.o host.o fft_dds_twd.o
-HOST_OBJ   = aie_control_xrt.o host.o fft_acc_mult_twd.o
+# HOST_OBJ   = aie_control_xrt.o host.o fft_acc_mult_twd.o
 # HOST_OBJ   = aie_control_xrt.o host.o uram_ctrl.o
+HOST_OBJ   = aie_control_xrt.o host.o range_fft.o
 AIE_CTRL_CPP = ../Work/ps/c_rts/aie_control_xrt.cpp
 
 CXXFLAGS += -std=c++17 -I$(XILINX_VIVADO)/include/ -I${SDKTARGETSYSROOT}/usr/include/xrt/ -O0 -g -Wall -c -fmessage-length=0 --sysroot=${SDKTARGETSYSROOT} -I${XILINX_VITIS}/aietools/include ${HOST_INC}

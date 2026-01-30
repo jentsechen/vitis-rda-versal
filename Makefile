@@ -2,8 +2,8 @@
 #Copyright (C) 2023, Advanced Micro Devices, Inc. All rights reserved.
 #SPDX-License-Identifier: MIT
 
-# TARGET = hw
-TARGET = hw_emu
+TARGET = hw
+# TARGET = hw_emu
 
 # ifeq ($(ARCH), aie)
 # 	PLATFORM ?= ${PLATFORM_REPO_PATHS}/xilinx_vck190_base_202420_1/xilinx_vck190_base_202420_1.xpfm
@@ -136,19 +136,13 @@ host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
 # ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_dds_twd.cpp
 # 	$(MAKE) -C sw/
-${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_acc_mult_twd.cpp
+# ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_acc_mult_twd.cpp
+# 	$(MAKE) -C sw/
+${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/range_fft.cpp
 	$(MAKE) -C sw/
 
 package: guard-ROOTFS guard-IMAGE guard-PLATFORM_REPO_PATHS package_${TARGET}
 
-# package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
-# 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
-# 		--package.rootfs ${ROOTFS} \
-# 		--package.kernel_image ${IMAGE} \
-# 		--package.boot_mode=sd \
-# 		--package.image_format=ext4 \
-# 		--package.defer_aie_run \
-# 		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
 package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
 		--package.rootfs ${ROOTFS} \
@@ -156,8 +150,16 @@ package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE}
 		--package.boot_mode=sd \
 		--package.image_format=ext4 \
 		--package.defer_aie_run \
-		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF} \
-		--package.sd_file ./verify/data_rx_1_cpx_64_tr.npy
+		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
+# package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
+# 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
+# 		--package.rootfs ${ROOTFS} \
+# 		--package.kernel_image ${IMAGE} \
+# 		--package.boot_mode=sd \
+# 		--package.image_format=ext4 \
+# 		--package.defer_aie_run \
+# 		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF} \
+# 		--package.sd_file ./verify/data_rx_1_cpx_64_tr.npy
 
 clean:
 	rm -rf _x v++_* ${XOS} ${OS} ${LIBADF} *.o.* *.o *.xpe *.xo.* \
