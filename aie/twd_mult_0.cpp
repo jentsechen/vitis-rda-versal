@@ -1235,6 +1235,20 @@ const cfloat twd_factor_inc[SUB_FFT_SIZE] = {
     {0.9999812487446132f, -0.006123900649408429f},
     {0.9999812120315595f, -0.006129892649391501f}};
 
+const cfloat twd_factor_reset_value[VEC_SIZE] = {
+    {1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f},
+    {1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f}};
+
+void reset_twd_mult_acc() {
+    aie::vector<cfloat, VEC_SIZE> *acc_ptr = (aie::vector<cfloat, VEC_SIZE> *)twd_factor_acc;
+    const aie::vector<cfloat, VEC_SIZE> *rst_val_ptr = (const aie::vector<cfloat, VEC_SIZE> *)twd_factor_reset_value;
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+      acc_ptr[i] = rst_val_ptr[0];
+    }
+}
+
+uint16 sub_fft_cnt = 0;
+
 void twd_mult(
     adf::input_buffer<cfloat, adf::extents<SUB_FFT_SIZE * N_BATCH>> &in,
     adf::output_buffer<cfloat, adf::extents<SUB_FFT_SIZE * N_BATCH>> &out) {
@@ -1248,6 +1262,13 @@ void twd_mult(
     for (int i = 0; i < BLOCK_SIZE; i++) {
       *outIter++ = aie::mul(*inIter++, acc_ptr[i]);
       acc_ptr[i] = aie::mul(acc_ptr[i], inc_ptr[i]);
+    }
+    if(sub_fft_cnt==SUB_FFT_SIZE/N_PARAL-1){
+        reset_twd_mult_acc();
+        sub_fft_cnt = 0;
+    }
+    else{
+        sub_fft_cnt++;
     }
   }
 }

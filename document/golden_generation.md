@@ -14,4 +14,6 @@ sudo systemctl restart nfs-kernel-server
 ```bash
 sudo mount -t nfs -o nolock,nfsvers=3 <server_ip>:<server_folder_path> <client_folder_path>
 # example: sudo mount -t nfs -o nolock,nfsvers=3 10.100.70.138:/media/jtc/Data/2024.2/Vitis/rda_dev_gmio/verify/golden_gen /mnt
+ls -lh <client_folder_path> # check mounting is successful
+# example: ls -lh /mnt
 ```

@@ -6,6 +6,7 @@
 
 #define VEC_SIZE 8
 #define BLOCK_SIZE SUB_FFT_SIZE / VEC_SIZE
+#define N_PARAL 2
 
 void widget_distributer_level0(input_stream<cfloat> *in,
                                output_stream<cfloat> *out0,

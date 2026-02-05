@@ -42,9 +42,11 @@ int main(int argc, char **argv) {
   //   cnpy::npy_save("row_proc_out.npy", out_pair.second.data(),
   //                  {n_iter * n_sample_per_iter}, "w");
 
-  std::vector<std::complex<float>> output = range_fft(device, uuid, argv[2]);
+    std::vector<std::complex<float>> output = range_fft(device, uuid, argv[2]);
+    cnpy::npy_save("col_proc_out.npy", output.data(),
+                   {n_iter * n_sample_per_iter * n_test_row}, "w");
 
-  std::cout << "Done!" << std::endl;
+    std::cout << "Done!" << std::endl;
 
   return 0;
 };

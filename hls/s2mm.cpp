@@ -6,19 +6,21 @@
 
 extern "C" {
 
-void s2mm(ap_int<SAMPLE_BIT_WIDTH> *mem, int n_sample, int mem_offset,
+void s2mm(ap_int<SAMPLE_BIT_WIDTH> *mem, int n_sample, int mem_offset, int n_period,
           hls::stream<ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0>> &s) {
 #pragma HLS INTERFACE m_axi port = mem offset = slave bundle = gmem
 #pragma HLS interface axis port = s
 #pragma HLS INTERFACE s_axilite port = mem bundle = control
 #pragma HLS INTERFACE s_axilite port = n_sample bundle = control
 #pragma HLS INTERFACE s_axilite port = mem_offset bundle = control
+#pragma HLS INTERFACE s_axilite port = n_period bundle = control
 #pragma HLS interface s_axilite port = return bundle = control
 
-  for (int i = 0; i < n_sample; i++) {
-#pragma HLS PIPELINE II = 1
-    ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x = s.read();
-    mem[i + mem_offset] = x.data;
+  for (int period_index = 0; period_index < n_period; period_index++) {
+    for (int i = 0; i < n_sample; i++) {
+      ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x = s.read();
+      mem[i + mem_offset + period_index * SUB_FFT_SIZE * SUB_FFT_SIZE] = x.data;
+    }
   }
 }
 }

@@ -5,19 +5,22 @@
 #define SUB_FFT_SIZE 1024
 
 extern "C" {
-void mm2s(ap_int<SAMPLE_BIT_WIDTH> *mem, int n_sample, int mem_offset,
+void mm2s(ap_int<SAMPLE_BIT_WIDTH> *mem, int n_sample, int mem_offset, int n_period,
           hls::stream<ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0>> &s) {
 #pragma HLS INTERFACE m_axi port = mem offset = slave bundle = gmem
 #pragma HLS INTERFACE axis port = s
 #pragma HLS INTERFACE s_axilite port = mem bundle = control
 #pragma HLS INTERFACE s_axilite port = n_sample bundle = control
 #pragma HLS INTERFACE s_axilite port = mem_offset bundle = control
+#pragma HLS INTERFACE s_axilite port = n_period bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  for (int i = 0; i < n_sample; i++) {
-    ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x;
-    x.data = mem[i + mem_offset];
-    s.write(x);
+  for (int period_index = 0; period_index < n_period; period_index++) {
+    for (int i = 0; i < n_sample; i++) {
+      ap_axis<SAMPLE_BIT_WIDTH, 0, 0, 0> x;
+      x.data = mem[i + mem_offset + period_index * SUB_FFT_SIZE * SUB_FFT_SIZE];
+      s.write(x);
+    }
   }
 }
 }
