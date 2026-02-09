@@ -130,19 +130,31 @@ host: guard-CXX guard-SDKTARGETSYSROOT ${HOST_EXE}
 
 # ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_dds_twd.cpp
 # 	$(MAKE) -C sw/
-${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_acc_mult_twd.cpp
+# ${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/fft_acc_mult_twd.cpp
+# 	$(MAKE) -C sw/
+${HOST_EXE}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./sw/host.cpp ./sw/test_fft_print.cpp
 	$(MAKE) -C sw/
 
 package: guard-ROOTFS guard-IMAGE guard-PLATFORM_REPO_PATHS package_${TARGET}
 
+# package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
+# 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
+# 		--package.rootfs ${ROOTFS} \
+# 		--package.kernel_image ${IMAGE} \
+# 		--package.boot_mode=sd \
+# 		--package.image_format=ext4 \
+# 		--package.defer_aie_run \
+# 		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
+
 package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
-		--package.rootfs ${ROOTFS} \
-		--package.kernel_image ${IMAGE} \
-		--package.boot_mode=sd \
-		--package.image_format=ext4 \
-		--package.defer_aie_run \
-		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
+    	--package.rootfs ${ROOTFS} \
+    	--package.kernel_image ${IMAGE} \
+    	--package.boot_mode=sd \
+    	--package.image_format=ext4 \
+    	--package.defer_aie_run \
+    	--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF} \
+    	--package.sd_file /mnt/workspace/Xilinx/Vitis/2024.2/vitis-rda-versal/verify/data_rx_1024_complex_64.npy
 
 clean:
 	rm -rf _x v++_* ${XOS} ${OS} ${LIBADF} *.o.* *.o *.xpe *.xo.* \

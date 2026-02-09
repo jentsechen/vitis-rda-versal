@@ -45,3 +45,8 @@ verify/output.npy
 
 sw/test_local.cpp
 sw/test_local
+
+emu_qemu_scripts
+launch_hw_emu.sh
+qemu_resize_img.sh
+xilinx_vck190_base_202420_1.wcfg

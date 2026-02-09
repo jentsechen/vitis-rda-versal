@@ -1,4 +1,4 @@
-#include "./cnpy/cnpy.cpp"
+// #include "./cnpy/cnpy.cpp"
 #include "./cnpy/cnpy.h"
 // #include "fft_dds_twd.h"
 #include "fft_acc_mult_twd.h"
@@ -25,21 +25,9 @@ using namespace std;
 int main(int argc, char **argv) {
   cnpy::NpyArray arr = cnpy::npy_load(argv[2]);
   assert(arr.shape[0] > 0 && arr.shape[1] > 0);
-  //   std::cout << "number of values: " << arr.shape[1] << std::endl;
+    std::cout << "number of values: " << arr.shape[1] << std::endl;
   const complex<float> *DataInput = arr.data<complex<float>>();
   
-  std::cout << "shape=(" << arr.shape[0] << ", " << arr.shape[1] << ")\n";
-  std::cout << "fortran_order=" << (arr.fortran_order ? "true" : "false")
-            << "\n";
-  std::cout << std::fixed << std::setprecision(8);
-  std::cout << "first row, first 10 elements:\n";
-  size_t n_print = std::min<size_t>(10, arr.shape[1]);
-  for (size_t i = 0; i < n_print; ++i) {
-    const auto &v = DataInput[i];
-    std::cout << "  [" << 0 << "," << i << "] " << v.real()
-              << (v.imag() < 0 ? "" : "+") << v.imag() << "j\n";
-  }
-
   char *xclbinFilename = argv[1];
   auto device = xrt::device(0);
   auto uuid = device.load_xclbin(xclbinFilename);
