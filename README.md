@@ -22,6 +22,25 @@ bash download_data.sh
 python3 verify_output.py
 ```
 
+## How to Set CMA (Contiguous Memory Allocator)
+* Default
+```bash
+versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
+CmaTotal:         524288 kB
+CmaFree:          523648 kB
+```
+* Add uEnv.txt
+```bash
+bootargs=console=ttyUSB1,115200 root=/dev/mmcblk0p2 rw rootwait cma=1024M
+uenvcmd=run default_bootcmd
+```
+* After adding uEnv.txt
+```bash
+versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
+CmaTotal:        1048576 kB
+CmaFree:          763476 kB
+```
+
 ## How to Run Hardware Emulation
 Refer to [Hardware Emulation](./document/hardware_emulation.md)
 
@@ -56,10 +75,3 @@ Refer to [Hardware Emulation](./document/hardware_emulation.md)
 
 ## Golden Generation
 [Golden Generation](./document/golden_generation.md)
-
-# Comparing with GPU
-* Raw data: 1024x22016 pixels
-* GPU
-    * (range FFT + element-wise mult. + range IFFT) of 1024 rows: 0.75 sec
-* AIE
-    * range FFT of 1 row: 0.16 sec
