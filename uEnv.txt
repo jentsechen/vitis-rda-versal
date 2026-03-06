@@ -1,0 +1,2 @@
+bootargs=console=ttyUSB1,115200 root=/dev/mmcblk0p2 rw rootwait cma=1024M
+uenvcmd=run default_bootcmd

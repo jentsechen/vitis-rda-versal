@@ -150,7 +150,8 @@ package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE}
 		--package.boot_mode=sd \
 		--package.image_format=ext4 \
 		--package.defer_aie_run \
-		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF}
+		--package.sd_file ${HOST_EXE} ${XSA} ${LIBADF} \
+		--package.sd_file uEnv.txt
 # package_${TARGET}: ${LIBADF} ${XSA} ${HOST_EXE} 
 # 	${VCC} -p -t ${TARGET} -f ${PLATFORM} \
 # 		--package.rootfs ${ROOTFS} \

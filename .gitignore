@@ -25,6 +25,7 @@ sd_card/
 *.exe
 *.a
 *.txt
+!uEnv.txt
 *.ltx
 *.npy
 *.pdi

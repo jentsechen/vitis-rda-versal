@@ -29,17 +29,19 @@ versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
 CmaTotal:         524288 kB
 CmaFree:          523648 kB
 ```
-* Add uEnv.txt
-```bash
-bootargs=console=ttyUSB1,115200 root=/dev/mmcblk0p2 rw rootwait cma=1024M
-uenvcmd=run default_bootcmd
-```
 * After adding uEnv.txt
 ```bash
 versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
 CmaTotal:        1048576 kB
 CmaFree:          763476 kB
 ```
+* How to Add uEnv.txt
+* Create uEnv.txt, for example
+```bash
+bootargs=console=ttyUSB1,115200 root=/dev/mmcblk0p2 rw rootwait cma=1024M
+uenvcmd=run default_bootcmd
+```
+* Add this line to package `--package.sd_file uEnv.txt`
 
 ## How to Run Hardware Emulation
 Refer to [Hardware Emulation](./document/hardware_emulation.md)
