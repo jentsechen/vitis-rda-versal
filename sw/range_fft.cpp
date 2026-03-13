@@ -44,7 +44,7 @@ range_fft(xrt::device &device, const xrt::uuid &uuid, std::string file_name) {
                     std::complex<float>(0.0f, 0.0f));
     }
     in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
-    auto row_fft_in_buf = xrt::bo(device, block_size_in_byte * n_test_row, xrt::bo::flags::normal, 1);
+    auto row_fft_in_buf = xrt::bo(device, block_size_in_byte * n_test_row, xrt::bo::flags::normal, 0);
     auto *row_fft_in_arr = row_fft_in_buf.map<__uint64_t *>();
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -89,10 +89,11 @@ range_fft(xrt::device &device, const xrt::uuid &uuid, std::string file_name) {
     //          reinterpret_cast<std::complex<float> *>(row_fft_in_arr),
     //          n_iter * n_sample_per_iter * n_byte_per_sample);
 
-    std::vector<std::complex<float>> output(n_iter * n_sample_per_iter * n_test_row);
-    memcpy(output.data(),
-         reinterpret_cast<std::complex<float> *>(row_fft_in_arr),
-         n_iter * n_sample_per_iter * n_byte_per_sample * n_test_row);
+    // std::vector<std::complex<float>> output(n_iter * n_sample_per_iter * n_test_row);
+    // memcpy(output.data(),
+    //      reinterpret_cast<std::complex<float> *>(row_fft_in_arr),
+    //      n_iter * n_sample_per_iter * n_byte_per_sample * n_test_row);
+    std::vector<std::complex<float>> output;
 
   return output;
 }

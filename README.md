@@ -23,25 +23,7 @@ python3 verify_output.py
 ```
 
 ## How to Set CMA (Contiguous Memory Allocator)
-* Default
-```bash
-versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
-CmaTotal:         524288 kB
-CmaFree:          523648 kB
-```
-* After adding uEnv.txt
-```bash
-versal-rootfs-common-20242:~$ cat /proc/meminfo | grep Cma
-CmaTotal:        1048576 kB
-CmaFree:          763476 kB
-```
-* How to Add uEnv.txt
-* Create uEnv.txt, for example
-```bash
-bootargs=console=ttyUSB1,115200 root=/dev/mmcblk0p2 rw rootwait cma=1024M
-uenvcmd=run default_bootcmd
-```
-* Add this line to package `--package.sd_file uEnv.txt`
+Refer to [CMA Setting](./document/cma_setting.md)
 
 ## How to Run Hardware Emulation
 Refer to [Hardware Emulation](./document/hardware_emulation.md)
