@@ -20,7 +20,7 @@ const size_t n_row = 32;
 const size_t data_bytes = 176160;
 const size_t pad_bytes  = 8212448;
 const size_t stride_bytes = data_bytes + pad_bytes; // 8,388,608 bytes (8MB)
-const int num_chunks = 85;
+const int num_chunks = 170;
 
 const size_t samples_per_data = data_bytes / sizeof(std::complex<float>); // 22,020 samples
 const size_t samples_per_pad  = pad_bytes / sizeof(std::complex<float>);  // 1,026,556 samples
@@ -34,7 +34,7 @@ const size_t n_sample_per_iter = 1024;
 const size_t n_sample_per_paral = n_iter * n_sample_per_iter / n_paral;
 const size_t block_size_in_byte =
     n_iter * n_sample_per_iter * n_byte_per_sample;
-const size_t n_test_row = 85;
+const size_t n_test_row = 170;
 
 size_t get_header_len(std::string file_name);
 

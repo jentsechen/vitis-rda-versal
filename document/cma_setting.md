@@ -69,3 +69,63 @@ hsi::create_sw_design device-tree -os device_tree -proc CIPS_0_pspmc_0_psv_corte
 hsi::generate_target -dir ./my_device_tree
 hsi::close_hw_design [hsi::current_hw_design]
 ```
+
+* Group ID (on FPGA)
+```bash
+versal-rootfs-common-20242:~$ xbutil examine --device 0000:00:00.0 --report memory
+----------------------------------------------------------------------
+                              WARNING:
+                xbutil has been renamed to xrt-smi
+        Please migrate to using xrt-smi instead of xbutil.
+
+    Commands, options, arguments and their descriptions can also be 
+                    reported via the --help option.
+----------------------------------------------------------------------
+
+----------------------
+[0000:00:00.0] : edge
+----------------------
+
+  Memory Topology
+    HW Context Slot: 0
+      Xclbin UUID: 0f54111d-aaca-5434-bc8c-139beb318907
+      |Index  ||Tag    ||Type      ||Temp(C)  ||Size     ||Base Address   |
+      |-------||-------||----------||---------||---------||---------------|
+      |0      ||DDR    ||MEM_DDR4  ||N/A      ||2 GB     ||0x0            |
+      |1      ||DDR    ||MEM_DRAM  ||N/A      ||6144 MB  ||0x800000000    |
+      |2      ||LPDDR  ||MEM_DRAM  ||N/A      ||8 GB     ||0x50000000000  |
+
+```
+
+`xclbinutil --info --input a.xclbin`
+```
+Memory Configuration
+--------------------
+   Name:         DDR
+   Index:        0
+   Type:         MEM_DDR4
+   Base Address: 0x0
+   Address Size: 0x80000000
+   Bank Used:    Yes
+
+   Name:         DDR
+   Index:        1
+   Type:         MEM_DRAM
+   Base Address: 0x800000000
+   Address Size: 0x180000000
+   Bank Used:    Yes
+
+   Name:         LPDDR
+   Index:        2
+   Type:         MEM_DRAM
+   Base Address: 0x50000000000
+   Address Size: 0x200000000
+   Bank Used:    No
+```
+
+num_chunks = 170
+write input buffer: 2748342 us
+column-wise FFT: 433276 us
+
+* Temporary conclusion: If `sp` (signal port) in `system.cfg` is defined for both DDR and LPDDR, buffer object of size smaller than CMA can be used for each segment of DDR and LPDDR
+    * In this test, 3 buffer objects with 1.36GB can be used
