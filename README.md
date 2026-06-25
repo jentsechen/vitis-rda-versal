@@ -4,19 +4,24 @@ make aie        // if update aie design
 make hls        // if update hls design
 make xsa        // if update aie or hls
 make host       // if update xsa or host design
-make package    // if update host
+make package    // first time only — writes BOOT.BIN, Image to SD card
 ```
+
+## How to Update Board Without Rebooting
+After `make host` (or `make xsa`), push updated files directly to the running board:
+```bash
+make upload          # upload host.exe only
+make upload-xclbin   # upload host.exe + a.xclbin (after xsa rebuild)
+```
+Note: `BOOT.BIN`, `Image`, `boot.scr` still require SD card rewrite + reboot.
+
 ## How to Verify
 ```bash
-# Host side
-cd verify
-bash copy_sd_card.sh
+# Host side — run host.exe on board remotely
+sshpass -p "petalinux" ssh petalinux@10.100.70.8 \
+  "cd /home/petalinux && ./host.exe a.xclbin /mnt/rx_signal_cpx64.npy 2>&1"
 
-# FPGA side
-./host.exe a.xclbin data_rx_1024_complex_64.npy
-./host.exe a.xclbin /mnt/rx_signal_cpx64.npy
-
-# Host side
+# Host side — download output and verify
 cd verify
 bash download_data.sh
 python3 verify_output.py

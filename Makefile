@@ -56,7 +56,13 @@ VCC      = v++
 VPP_SPEC =system.cfg
 VPP_FLAGS=--save-temps --verbose --config ${VPP_SPEC}  
 
-.PHONY: clean
+.PHONY: clean upload upload-xclbin
+
+upload:
+	./verify/upload_to_board.sh
+
+upload-xclbin:
+	./verify/upload_to_board.sh --xclbin
 
 ###
 # Guarding Checks. Do not modify.
