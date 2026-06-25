@@ -22,6 +22,14 @@ bash download_data.sh
 python3 verify_output.py
 ```
 
+## How to Run host.exe Remotely (and verify the result is from the board)
+Board IP: `10.100.70.8`, user: `petalinux`, password: `petalinux`
+```bash
+sshpass -p "petalinux" ssh petalinux@10.100.70.8 \
+  "cd /home/petalinux && ./host.exe a.xclbin /mnt/rx_signal_cpx64.npy 2>&1"
+```
+Run this command yourself to confirm the output matches what Claude reported — timing values (`us`) may vary slightly between runs, which is expected for real hardware.
+
 ## How to Set CMA (Contiguous Memory Allocator)
 Refer to [CMA Setting](./document/cma_setting.md)
 
