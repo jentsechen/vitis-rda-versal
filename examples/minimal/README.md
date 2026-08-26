@@ -33,7 +33,7 @@ sw/
   Makefile
 system.cfg               # nk=/sc=/sp= connectivity (2 PL kernels <-> 1 AIE graph)
 Makefile                  # same targets as the top-level project
-verify/run_on_board.sh    # scp host.exe + a.xclbin, run over ssh, show PASS/FAIL
+verify/upload_to_board.sh # scp host.exe (+ a.xclbin with --xclbin); does not run it
 ```
 
 This mirrors the top-level project's conventions 1:1 (same `nk=`/`sc=`/`sp=`
@@ -60,13 +60,20 @@ this same base platform (e.g. from the top-level project — they share
 example. `xrt::device::load_xclbin()` reconfigures the PL *and* the AIE
 array at runtime; `host.exe` and `a.xclbin` are the only artifacts that
 differ per-design.
+Upload only pushes files — it doesn't run anything, matching the top-level
+project's `verify/upload_to_board.sh`:
 ```bash
-bash verify/run_on_board.sh   # scp host.exe + a.xclbin, run over ssh, print PASS/FAIL
+bash verify/upload_to_board.sh            # host.exe only
+bash verify/upload_to_board.sh --xclbin   # host.exe + a.xclbin (after `make xsa`)
 ```
-or, matching the top-level project's targets:
+or, equivalently, via the Makefile:
 ```bash
 make upload          # host.exe only
 make upload-xclbin   # host.exe + a.xclbin (after `make xsa`)
+```
+Then run it yourself, e.g.:
+```bash
+ssh petalinux@10.100.70.23 "cd /home/petalinux && ./host.exe a.xclbin"
 ```
 
 ### `make package` — only for a board that has never booted this platform
