@@ -1,0 +1,18 @@
+hls/scale_mm2s/
+hls/scale_s2mm/
+
+# aiesimulator byproducts (root .gitignore doesn't cover these names/dirs)
+.AIE_SIM_CMD_LINE_OPTIONS
+aiesimulator_output/
+foo.vcd
+pl_sample_counts
+throughput_info.json
+
+# generated copy of the AIE-compiler control code, refreshed by `make host`
+# (root .gitignore's "sw/aie_control_xrt.*" only reaches the top-level sw/, not this nested one)
+sw/aie_control_xrt.cpp
+
+# root .gitignore blanket-ignores *.txt; re-include our checked-in aiesim
+# input stimulus (not a build byproduct -- data/scale_out.txt, the generated
+# output, stays under aiesimulator_output/ and stays ignored)
+!data/scale_in.txt
